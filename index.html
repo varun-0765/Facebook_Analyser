@@ -105,6 +105,7 @@
         <div class="row" style="grid-template-columns:1fr">
           <input class="input" id="geminiKeyInput" placeholder="Gemini API key (optional, only for AI ideas)" />
         </div>
+        <p class="hint" style="color:#f5c842">Security note: this is a frontend-only demo. Use scoped test tokens/keys, not production secrets.</p>
         <p class="hint">Try: <a href="#" onclick="demoLoad('Meta');return false;">Meta</a> · <a href="#" onclick="demoLoad('NASA');return false;">NASA</a> · <a href="#" onclick="demoLoad('FCBarcelona');return false;">FCBarcelona</a></p>
       </div>
       <div class="stats">
@@ -183,7 +184,8 @@
 
 <script>
   const FB_GRAPH = 'https://graph.facebook.com/v20.0';
-  const DEFAULT_FB_TOKEN = '';
+  const PAGE_FIELDS = 'id,name,username,about,category,fan_count,followers_count,verification_status,picture{url}';
+  const POST_FIELDS = 'id,message,created_time,type,shares,permalink_url,reactions.summary(true).limit(0),comments.summary(true).limit(0)';
   function getGemKey(){
     return (document.getElementById('geminiKeyInput')?.value||'').trim();
   }
@@ -205,8 +207,7 @@
   function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 
   function getToken(){
-    const input=document.getElementById('tokenInput').value.trim();
-    return input||DEFAULT_FB_TOKEN;
+    return document.getElementById('tokenInput').value.trim();
   }
 
   function normalizeInput(raw){
@@ -219,15 +220,21 @@
 
   async function fbFetch(path,params,token){
     const accessToken=token||getToken();
-    if(!accessToken)throw new Error('Facebook access token is required. Paste it in the token field.');
+    if(!accessToken)throw new Error('Facebook access token is required. Provide a valid token to continue.');
     const cleanPath=String(path).replace(/^\/+/,'');
     const u=new URL(FB_GRAPH+'/'+cleanPath);
     Object.entries(params||{}).forEach(([k,v])=>u.searchParams.set(k,v));
-    u.searchParams.set('access_token',accessToken);
-    const res=await fetch(u.toString());
+    const res=await fetch(u.toString(),{headers:{Authorization:'Bearer '+accessToken}});
     const data=await res.json();
     if(!res.ok||data.error){
-      const msg=data?.error?.message||('HTTP '+res.status);
+      const msg=data?.error?.message||(
+        res.status===401?'Invalid or expired access token (HTTP 401).':
+        res.status===403?'Access denied (HTTP 403). Check token permissions for the requested page data.':
+        res.status===404?'Page or endpoint not found (HTTP 404). Verify the page username/ID.':
+        res.status===429?'Facebook API rate limit exceeded (HTTP 429).':
+        res.status>=500?'Facebook API is temporarily unavailable (HTTP '+res.status+').':
+        ('HTTP '+res.status)
+      );
       throw new Error(msg);
     }
     return data;
@@ -243,12 +250,12 @@
   }
 
   async function fetchPageInfo(pageId){
-    return fbFetch(pageId,{fields:'id,name,username,about,category,fan_count,followers_count,verification_status,picture{url}'});
+    return fbFetch(pageId,{fields:PAGE_FIELDS});
   }
 
   async function fetchPagePosts(pageId,maxPosts){
     const limit=Math.min(maxPosts||50,100);
-    const j=await fbFetch(pageId+'/posts',{fields:'id,message,created_time,type,shares,permalink_url,reactions.summary(true).limit(0),comments.summary(true).limit(0)',limit:String(limit)});
+    const j=await fbFetch(pageId+'/posts',{fields:POST_FIELDS,limit:String(limit)});
     return j.data||[];
   }
 
@@ -355,13 +362,13 @@
     posts.forEach(p=>{days[idx[new Date(p.createdAt).getDay()]]+=p.score;});
     const bestDay=Object.entries(days).sort((a,b)=>b[1]-a[1])[0][0];
 
-    const highShare=posts.filter(p=>p.shares>=10).length;
+    const highShareCount=posts.filter(p=>p.shares>=10).length;
     return [
       `Average engagement rate per post is <strong>${avgER}%</strong> (followers baseline: ${fmtNum(followers)}).`,
       `<strong>${bestType}</strong> posts currently drive the highest engagement on this page.`,
       `Top-performing day is <strong>${bestDay}</strong> based on weighted interactions.`,
       `Average caption length is <strong>${capLen}</strong> characters — keep hooks in first 120 chars.`,
-      `${highShare} of ${posts.length} recent posts crossed <strong>10+ shares</strong>.`
+      `${highShareCount} of ${posts.length} recent posts crossed <strong>10+ shares</strong>.`
     ];
   }
 
@@ -378,7 +385,10 @@
       username:page.username||'',
       category:page.category||'Facebook Page',
       about:page.about||'',
-      verified:String(page.verification_status||'').toLowerCase()==='blue_verified'||String(page.verification_status||'').toLowerCase().includes('verified'),
+      verified:(function(){
+        const status=String(page.verification_status||'').toLowerCase();
+        return status==='blue_verified'||status==='verified';
+      })(),
       picture:page?.picture?.data?.url||'',
       followers,
       fans:Number(page.fan_count||0),
@@ -489,12 +499,13 @@
   async function callGemini(prompt){
     const gemKey=getGemKey();
     if(!gemKey)throw new Error('Gemini key missing');
+    if(!/^AIzaSy[\w-]{20,}$/.test(gemKey))throw new Error('Invalid Gemini API key format.');
     const payload={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1400}};
     const models=['gemini-2.0-flash','gemini-1.5-flash'];
     let err='Unknown error';
     for(const m of models){
       try{
-        const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+gemKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':gemKey},body:JSON.stringify(payload)});
         const j=await res.json();
         if(!res.ok){err=j?.error?.message||('HTTP '+res.status);continue;}
         const txt=j?.candidates?.[0]?.content?.parts?.[0]?.text||'';
@@ -509,7 +520,7 @@
     try{const j=JSON.parse(clean);if(Array.isArray(j))return j;}catch{}
     const s=clean.indexOf('['),e=clean.lastIndexOf(']');
     if(s!==-1&&e!==-1&&e>s)return JSON.parse(clean.slice(s,e+1));
-    throw new Error('AI response was not valid JSON.');
+    throw new Error('Failed to parse AI response format. Please try generating ideas again.');
   }
 
   function fallbackIdeas(topic,data){
