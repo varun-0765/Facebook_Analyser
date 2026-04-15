@@ -1,1614 +1,567 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TubeIQ — YouTube Channel Intelligence</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>
-:root{
-  --bg:#070b14;--bg2:#0d1220;--bg3:#111827;
-  --border:rgba(255,255,255,0.07);
-  --red:#ff2d2d;--red-dim:rgba(255,45,45,0.12);
-  --cyan:#00d4ff;--cyan-dim:rgba(0,212,255,0.10);
-  --green:#00e5a0;--gold:#f5c842;--purple:#7c2cf0;
-  --muted:#4a5568;--text:#e2e8f0;--text2:#8892a4;
-  --nav-bg:rgba(7,11,20,0.88);--overlay-bg:rgba(7,11,20,0.88);
-  --grid-line:rgba(255,255,255,0.04);--grid-line-strong:rgba(255,255,255,0.07);
-  --radius:14px;--radius-sm:8px;
-}
-[data-theme="light"]{
-  --bg:#f5f7fb;--bg2:#ffffff;--bg3:#eef2f8;
-  --border:rgba(15,23,42,0.12);
-  --red:#dc2626;--red-dim:rgba(220,38,38,0.1);
-  --cyan:#0284c7;--cyan-dim:rgba(2,132,199,0.12);
-  --green:#059669;--gold:#b45309;--purple:#7c3aed;
-  --muted:#64748b;--text:#0f172a;--text2:#475569;
-  --nav-bg:rgba(255,255,255,0.85);--overlay-bg:rgba(15,23,42,0.45);
-  --grid-line:rgba(15,23,42,0.08);--grid-line-strong:rgba(15,23,42,0.16);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  background-size:256px;pointer-events:none}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FaceIQ — Facebook Page Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    :root{
+      --bg:#050916;--bg2:#0d1427;--bg3:#121a30;
+      --border:rgba(255,255,255,0.08);
+      --fb:#1877f2;--fb-dim:rgba(24,119,242,0.16);
+      --cyan:#00d4ff;--green:#00e5a0;--gold:#f5c842;--text:#e2e8f0;--text2:#94a3b8;--muted:#64748b;
+      --radius:14px;--radius-sm:8px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    nav{position:fixed;top:0;left:0;right:0;z-index:40;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(5,9,22,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;background:linear-gradient(90deg,var(--fb),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .badge{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;border:1px solid rgba(24,119,242,.45);color:var(--fb);padding:4px 12px;border-radius:999px;background:var(--fb-dim)}
+    #hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:96px 20px 40px}
+    .hero-card{max-width:920px;width:100%;text-align:center}
+    .eyebrow{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(24,119,242,.45);background:var(--fb-dim);color:var(--fb);padding:6px 12px;border-radius:999px;margin-bottom:20px}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8vw,100px);line-height:.95;letter-spacing:1px;margin-bottom:20px}
+    h1 .acc{color:var(--fb)}
+    .sub{max-width:700px;margin:0 auto 28px;color:var(--text2);line-height:1.7}
+    .search-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:grid;gap:10px}
+    .row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+    .input{width:100%;border:1px solid var(--border);background:var(--bg3);color:var(--text);border-radius:var(--radius-sm);padding:12px 14px;font-family:'DM Mono',monospace;font-size:12px;outline:none}
+    .input:focus{border-color:rgba(24,119,242,.6)}
+    .btn{border:none;background:linear-gradient(135deg,var(--fb),#0f5cc5);color:#fff;border-radius:var(--radius-sm);padding:12px 18px;cursor:pointer;font-weight:600;letter-spacing:.4px}
+    .btn:hover{filter:brightness(1.05)}
+    .hint{font-size:12px;color:var(--muted);text-align:left;font-family:'DM Mono',monospace}
+    .hint a{color:var(--cyan);text-decoration:none}
+    .stats{margin-top:24px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap}
+    .stat{text-align:center}.stat b{display:block;font-family:'Bebas Neue',sans-serif;font-size:34px}.stat span{font-size:11px;color:var(--muted);letter-spacing:2px;font-family:'DM Mono',monospace}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-  padding:0 40px;height:64px;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;
-  background:linear-gradient(90deg,var(--red) 0%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-logo span{color:var(--text);-webkit-text-fill-color:var(--text);opacity:.4}
-.nav-right{display:flex;align-items:center;gap:12px}
-.theme-select{background:var(--bg2);border:1px solid var(--border);color:var(--text2);border-radius:999px;padding:6px 10px;
-  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;outline:none;cursor:pointer}
-.theme-select:focus{border-color:rgba(0,212,255,0.45)}
-.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
-  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.nav-badge{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;
-  background:var(--red-dim);border:1px solid rgba(255,45,45,0.3);color:var(--red);padding:4px 12px;border-radius:20px}
-.nav-login-btn{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);
-  color:var(--text);border-radius:var(--radius-sm);padding:8px 16px;font-family:'Outfit',sans-serif;
-  font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
-.nav-login-btn:hover{border-color:rgba(255,255,255,0.2);background:var(--bg3)}
-.nav-user-pill{display:none;align-items:center;gap:8px;background:var(--bg2);border:1px solid rgba(0,229,160,0.2);
-  color:var(--green);border-radius:var(--radius-sm);padding:6px 14px;font-family:'DM Mono',monospace;font-size:12px}
-.nav-user-pill img{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,229,160,0.3)}
-.nav-user-pill.active{display:flex}
-.nav-logout{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;margin-left:4px;transition:color .2s}
-.nav-logout:hover{color:var(--red)}
+    #loading{display:none;position:fixed;inset:0;z-index:70;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:14px}
+    .loader{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--fb);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #loadingText{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);letter-spacing:1px}
 
-/* HERO */
-#hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px;overflow:hidden}
-.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,45,45,0.12) 0%,transparent 70%);
-  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
-  animation:pulse-glow 4s ease-in-out infinite alternate}
-@keyframes pulse-glow{from{opacity:.6;transform:translate(-50%,-50%) scale(1)}to{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
-.hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--red);margin-bottom:24px;border:1px solid rgba(255,45,45,0.3);padding:6px 16px;border-radius:20px;
-  background:var(--red-dim);display:inline-block;animation:fadeUp .6s ease both}
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(58px,9vw,110px);line-height:.95;
-  letter-spacing:2px;margin-bottom:24px;animation:fadeUp .7s .1s ease both}
-.hero-title .accent{color:var(--red)} .hero-title .accent2{color:var(--cyan)}
-.hero-sub{font-size:17px;font-weight:300;color:var(--text2);max-width:520px;line-height:1.7;
-  margin-bottom:48px;animation:fadeUp .7s .2s ease both}
-.search-wrap{width:100%;max-width:560px;animation:fadeUp .7s .3s ease both}
-.search-inner{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:6px;transition:border-color .3s}
-.search-inner:focus-within{border-color:rgba(255,45,45,0.5);box-shadow:0 0 0 3px rgba(255,45,45,0.08)}
-.search-inner input{flex:1;background:transparent;border:none;outline:none;color:var(--text);
-  font-family:'DM Mono',monospace;font-size:14px;padding:10px 16px;letter-spacing:.5px}
-.search-inner input::placeholder{color:var(--muted)}
-.btn-analyze{background:linear-gradient(135deg,var(--red) 0%,#c0392b 100%);color:#fff;border:none;
-  border-radius:var(--radius-sm);padding:12px 28px;font-family:'Outfit',sans-serif;font-size:14px;
-  font-weight:600;letter-spacing:.5px;cursor:pointer;transition:transform .2s,box-shadow .2s;white-space:nowrap}
-.btn-analyze:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,45,45,0.35)}
-.hint{font-size:12px;color:var(--muted);margin-top:12px;font-family:'DM Mono',monospace}
-.hint a{color:var(--cyan);text-decoration:none;cursor:pointer;transition:opacity .2s}
-.hint a:hover{opacity:.7}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    #dashboard{display:none;max-width:1200px;margin:0 auto;padding:88px 20px 72px}
+    .head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:20px}
+    .id-wrap{display:flex;gap:14px;align-items:center}
+    .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--fb),var(--cyan));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;overflow:hidden}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .meta h2{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;letter-spacing:1px}
+    .meta p{font-family:'DM Mono',monospace;color:var(--text2);font-size:12px;margin-top:8px}
+    .pill{display:inline-flex;gap:6px;align-items:center;border:1px solid rgba(0,229,160,.3);color:var(--green);padding:2px 10px;border-radius:999px;font-family:'DM Mono',monospace;font-size:10px;margin-top:8px}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);padding:10px 14px;cursor:pointer}
 
-/* HERO LOGIN */
-.hero-divider{display:flex;align-items:center;gap:16px;width:100%;max-width:560px;margin:20px 0;animation:fadeUp .7s .4s ease both}
-.hero-divider span{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;white-space:nowrap}
-.hero-divider::before,.hero-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.btn-google-login{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:560px;
-  background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);
-  padding:14px 24px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;
-  transition:all .3s;animation:fadeUp .7s .45s ease both}
-.btn-google-login:hover{border-color:rgba(255,255,255,0.2);background:var(--bg3);transform:translateY(-1px)}
-.btn-google-login .g-icon{width:20px;height:20px;flex-shrink:0}
-.btn-google-login .gl-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);
-  letter-spacing:1px;border:1px solid rgba(0,229,160,0.3);padding:2px 8px;border-radius:10px;margin-left:auto}
-.hero-stats{display:flex;gap:40px;margin-top:72px;animation:fadeUp .7s .5s ease both}
-.hero-stat{text-align:center}
-.hero-stat .num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);letter-spacing:1px}
-.hero-stat .lbl{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+    .k{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+    .k small{display:block;font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1.5px;margin-bottom:8px}
+    .k b{display:block;font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1}
+    .k span{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
 
-/* LOADING */
-#loading{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);
-  flex-direction:column;align-items:center;justify-content:center;gap:24px}
-.loader-ring{width:60px;height:60px;border:3px solid var(--border);border-top-color:var(--red);
-  border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loader-text{font-family:'DM Mono',monospace;font-size:13px;color:var(--text2);letter-spacing:2px}
-.loader-steps{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.step-item{display:flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);transition:color .3s}
-.step-item.active{color:var(--cyan)} .step-item.done{color:var(--green)}
-.step-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-bottom:14px}
+    .panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+    .panel h3{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.2px;margin-bottom:4px}
+    .panel .subline{font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1.4px;margin-bottom:12px}
 
-/* DASHBOARD */
-#dashboard{display:none;position:relative;z-index:1;padding:80px 24px 120px;max-width:1280px;margin:0 auto}
-.dash-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:40px;gap:24px}
-.channel-identity{display:flex;align-items:center;gap:18px}
-.channel-avatar{width:72px;height:72px;border-radius:50%;flex-shrink:0;
-  border:2px solid rgba(255,45,45,0.4);box-shadow:0 0 20px rgba(255,45,45,0.2);
-  background:linear-gradient(135deg,var(--red),var(--purple));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;overflow:hidden}
-.channel-avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.channel-meta h2{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--text)}
-.channel-meta p{font-size:13px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:4px}
-.verified-badge{display:none;align-items:center;gap:6px;margin-top:6px;
-  font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px;
-  background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2);border-radius:10px;padding:2px 10px}
-.verified-badge.show{display:inline-flex}
-.dash-actions{display:flex;gap:10px;align-self:flex-start;flex-wrap:wrap;justify-content:flex-end}
-.back-btn{background:transparent;border:1px solid var(--border);color:var(--text2);
-  border-radius:var(--radius-sm);padding:10px 20px;font-family:'Outfit',sans-serif;
-  font-size:13px;cursor:pointer;transition:all .2s}
-.back-btn:hover{border-color:var(--red);color:var(--red)}
-.compare-btn{background:transparent;border:1px solid rgba(0,212,255,0.3);color:var(--cyan);
-  border-radius:var(--radius-sm);padding:10px 20px;font-family:'Outfit',sans-serif;
-  font-size:13px;cursor:pointer;transition:all .2s}
-.compare-btn:hover{background:rgba(0,212,255,0.08)}
+    .insights{display:flex;flex-direction:column;gap:8px}
+    .ins{padding:12px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);font-size:13px;color:var(--text2);line-height:1.5}
 
-/* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
-.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;
-  position:relative;overflow:hidden;transition:transform .2s,border-color .2s;animation:fadeUp .5s ease both}
-.kpi-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,0.12)}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-color,var(--red));opacity:.7}
-.kpi-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:10px}
-.kpi-value{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:1px;color:var(--text);line-height:1}
-.kpi-change{font-size:12px;margin-top:6px;font-family:'DM Mono',monospace}
-.kpi-change.up{color:var(--green)} .kpi-change.down{color:var(--red)}
+    .post-table{width:100%;border-collapse:collapse}
+    .post-table th{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:left;padding:0 10px 10px;border-bottom:1px solid var(--border);letter-spacing:1.4px}
+    .post-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;color:var(--text2)}
+    .post-title{color:var(--text);max-width:420px}
 
-/* GRIDS */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.grid-3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:20px;margin-bottom:20px}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}nav{padding:0 20px}.hero-stats{gap:24px}.dash-actions{flex-direction:column}}
+    .idea-controls{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px}
+    .idea-results{display:flex;flex-direction:column;gap:10px}
+    .idea{border:1px solid rgba(24,119,242,.25);background:rgba(24,119,242,.06);border-radius:10px;padding:12px}
+    .idea b{display:block;color:var(--text);margin-bottom:6px}
+    .idea p{font-size:12px;color:var(--text2);line-height:1.5}
 
-/* PANEL */
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;animation:fadeUp .5s .1s ease both}
-.panel-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--text);margin-bottom:6px}
-.panel-sub{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:20px;letter-spacing:.5px}
+    footer{text-align:center;padding:28px 16px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
 
-/* NICHE */
-.niche-main{display:flex;align-items:center;gap:16px}
-.niche-icon{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--red-dim),var(--cyan-dim));
-  border:1px solid rgba(0,212,255,0.2);display:flex;align-items:center;justify-content:center;font-size:26px}
-.niche-name{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;color:var(--text)}
-.niche-conf{font-size:12px;color:var(--green);font-family:'DM Mono',monospace;margin-top:4px}
-.confidence-bar{flex:1;min-width:180px}
-.conf-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:8px}
-.bar-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red) 0%,var(--cyan) 100%);transition:width 1.2s cubic-bezier(.22,1,.36,1)}
-.niche-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.tag{font-family:'DM Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;
-  background:var(--bg3);border:1px solid var(--border);color:var(--text2);letter-spacing:.5px;transition:all .2s}
-.tag:hover{border-color:var(--cyan);color:var(--cyan)}
-.tag.highlight{border-color:rgba(255,45,45,0.4);color:var(--red);background:var(--red-dim)}
-
-/* CHARTS */
-.chart-wrap{position:relative} canvas{max-width:100%}
-.radar-wrap{display:flex;align-items:center;justify-content:center;height:240px}
-
-/* RULES */
-.rule-list{display:flex;flex-direction:column;gap:10px}
-.rule-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;
-  display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;transition:border-color .2s,transform .2s}
-.rule-item:hover{border-color:rgba(0,212,255,0.2);transform:translateX(3px)}
-.rule-expr{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)}
-.rule-expr .arrow{color:var(--cyan);margin:0 6px} .rule-expr .bold{color:var(--text)}
-.rule-conf{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);white-space:nowrap}
-.rule-lift{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
-.btn-powerbi{margin-top:12px;background:transparent;border:1px solid rgba(0,212,255,0.28);color:var(--cyan);
-  border-radius:var(--radius-sm);padding:8px 12px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.7px;cursor:pointer}
-.btn-powerbi:hover{background:rgba(0,212,255,0.08)}
-
-/* ── RECOMMENDATIONS PANEL (owner only) ── */
-#recPanel{display:none;margin-bottom:20px}
-#recPanel.show{display:block}
-
-/* Content wizard */
-.rec-wizard{background:var(--bg3);border:1px dashed rgba(0,212,255,0.3);border-radius:var(--radius);
-  padding:28px;display:flex;flex-direction:column;gap:16px}
-.rec-wizard-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--cyan)}
-.rec-wizard p{font-size:14px;color:var(--text2);line-height:1.6}
-.wizard-field label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--text2);
-  text-transform:uppercase;display:block;margin-bottom:8px}
-.wizard-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;padding:12px 16px;outline:none;
-  transition:border-color .2s;resize:none}
-.wizard-input:focus{border-color:rgba(0,212,255,0.5)}
-.wizard-input::placeholder{color:var(--muted)}
-.wizard-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.wizard-row{grid-template-columns:1fr}}
-.btn-generate{background:linear-gradient(135deg,var(--cyan),#0099cc);color:#070b14;border:none;
-  border-radius:var(--radius-sm);padding:14px 32px;font-family:'Bebas Neue',sans-serif;font-size:18px;
-  letter-spacing:1.5px;cursor:pointer;transition:transform .2s,box-shadow .2s;align-self:flex-start}
-.btn-generate:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,212,255,0.3)}
-.btn-generate:disabled{opacity:.5;cursor:default;transform:none}
-
-/* Generated rec cards */
-.rec-results{display:flex;flex-direction:column;gap:16px;margin-top:24px}
-.rec-card{background:var(--bg2);border:1px solid rgba(0,212,255,0.15);border-radius:var(--radius);
-  overflow:hidden;animation:fadeUp .4s ease both}
-.rec-card-head{background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(124,44,240,0.08));
-  padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.rec-card-num{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--cyan);line-height:1;width:36px;flex-shrink:0}
-.rec-card-title{font-size:16px;font-weight:700;color:var(--text);line-height:1.3}
-.rec-card-body{padding:20px}
-.rec-section{margin-bottom:16px}
-.rec-section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;
-  color:var(--muted);text-transform:uppercase;margin-bottom:6px}
-.rec-section-text{font-size:13px;color:var(--text2);line-height:1.6}
-.rec-tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.rec-tag{font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;
-  background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--cyan)}
-.rec-meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
-.rec-meta-chip{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)}
-.rec-meta-chip strong{color:var(--text)}
-.rec-thumbnail-text{background:linear-gradient(135deg,#ff2d2d,var(--purple));
-  color:#fff;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;
-  padding:16px 20px;border-radius:var(--radius-sm);text-align:center;margin-top:12px;
-  line-height:1.2}
-
-/* PERF TABLE */
-.perf-table{width:100%;border-collapse:collapse}
-.perf-table th{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--muted);text-align:left;padding:0 16px 12px;border-bottom:1px solid var(--border)}
-.perf-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--grid-line);font-family:'DM Mono',monospace}
-.perf-table tr:hover td{background:var(--grid-line)}
-.perf-table .title-cell{color:var(--text);font-family:'Outfit',sans-serif;font-size:13px}
-.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-family:'DM Mono',monospace}
-.badge-green{background:rgba(0,229,160,0.1);color:var(--green);border:1px solid rgba(0,229,160,0.2)}
-.badge-red{background:rgba(255,45,45,0.1);color:var(--red);border:1px solid rgba(255,45,45,0.2)}
-.badge-gold{background:rgba(245,200,66,0.1);color:var(--gold);border:1px solid rgba(245,200,66,0.2)}
-
-/* CHATBOT */
-.chat-fab{position:fixed;bottom:32px;right:32px;z-index:300;width:60px;height:60px;border-radius:50%;
-  border:none;cursor:pointer;background:linear-gradient(135deg,var(--red) 0%,var(--purple) 100%);
-  box-shadow:0 8px 32px rgba(255,45,45,0.4);display:none;align-items:center;justify-content:center;
-  transition:transform .2s,box-shadow .2s;font-size:24px}
-.chat-fab:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(255,45,45,0.5)}
-.chat-fab.visible{display:flex}
-.chat-notif{position:absolute;top:-4px;right:-4px;width:18px;height:18px;background:var(--green);
-  border-radius:50%;border:2px solid var(--bg);font-size:10px;color:var(--bg);
-  display:flex;align-items:center;justify-content:center;font-weight:700}
-.chat-panel{position:fixed;bottom:108px;right:32px;z-index:300;width:400px;max-width:calc(100vw - 48px);
-  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
-  box-shadow:0 24px 80px rgba(0,0,0,0.6);display:none;flex-direction:column;overflow:hidden;
-  animation:chatSlideIn .3s ease}
-.chat-panel.open{display:flex}
-@keyframes chatSlideIn{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:none}}
-.chat-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.chat-head-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--purple));
-  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.chat-head-info h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--text)}
-.chat-head-info p{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px}
-.chat-close{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;transition:color .2s;padding:4px;line-height:1}
-.chat-close:hover{color:var(--text)}
-.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:320px}
-.chat-msgs::-webkit-scrollbar{width:4px} .chat-msgs::-webkit-scrollbar-thumb{background:var(--muted);border-radius:2px}
-.msg{display:flex;gap:8px;animation:fadeUp .2s ease}
-.msg.user{flex-direction:row-reverse}
-.msg-bubble{max-width:82%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5}
-.msg.bot .msg-bubble{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:14px 14px 14px 4px}
-.msg.user .msg-bubble{background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;border-radius:14px 14px 4px 14px}
-.msg-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
-.msg.bot .msg-avatar{background:linear-gradient(135deg,var(--red),var(--purple))}
-.msg.user .msg-avatar{background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
-.chat-typing{display:none;gap:4px;padding:4px 0}
-.chat-typing.show{display:flex}
-.chat-typing span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:blink 1.2s infinite}
-.chat-typing span:nth-child(2){animation-delay:.2s} .chat-typing span:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
-.chat-input-wrap{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
-.chat-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;
-  padding:10px 14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none;resize:none;
-  max-height:80px;transition:border-color .2s}
-.chat-input:focus{border-color:rgba(255,45,45,0.4)} .chat-input::placeholder{color:var(--muted)}
-.chat-send{background:linear-gradient(135deg,var(--red),#c0392b);border:none;border-radius:10px;
-  width:40px;height:40px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:16px;transition:transform .15s,opacity .15s;flex-shrink:0;align-self:flex-end}
-.chat-send:hover{transform:scale(1.05)} .chat-send:disabled{opacity:.4;cursor:default}
-.chat-suggestions{padding:0 16px 12px;display:flex;flex-wrap:wrap;gap:6px}
-.chat-chip{background:var(--bg3);border:1px solid var(--border);color:var(--text2);
-  border-radius:20px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:11px;
-  cursor:pointer;transition:all .2s}
-.chat-chip:hover{border-color:var(--red);color:var(--red)}
-
-/* GOOGLE LOGIN MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:400;
-  background:var(--overlay-bg);backdrop-filter:blur(10px);align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;
-  padding:40px;max-width:480px;width:calc(100% - 48px);animation:fadeUp .3s ease;position:relative}
-.modal-box h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;color:var(--text);margin-bottom:8px}
-.modal-box p{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px}
-.modal-perms{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
-.modal-perm{display:flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)}
-.modal-perm-icon{width:28px;height:28px;border-radius:8px;background:var(--red-dim);
-  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.modal-note{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.5px;text-align:center;margin-top:16px}
-.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;
-  position:absolute;top:20px;right:20px;font-size:20px;transition:color .2s}
-.modal-close:hover{color:var(--text)}
-/* setup guide inside modal */
-.setup-steps{background:var(--bg3);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px}
-.setup-step{display:flex;gap:10px;margin-bottom:10px;font-size:13px;color:var(--text2);line-height:1.5}
-.setup-step:last-child{margin-bottom:0}
-.setup-step-num{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--cyan);line-height:1;flex-shrink:0;width:20px}
-.setup-step a{color:var(--cyan);text-decoration:none}
-.setup-step a:hover{text-decoration:underline}
-
-/* CHANNEL HEALTH AUDIT */
-#healthPanel{display:none;margin-bottom:20px}
-#healthPanel.show{display:block}
-.health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.health-item{display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:var(--radius-sm);border:1px solid var(--border)}
-.health-item.err{background:rgba(255,45,45,0.06);border-color:rgba(255,45,45,0.2)}
-.health-item.warn{background:rgba(245,200,66,0.06);border-color:rgba(245,200,66,0.2)}
-.health-item.ok{background:rgba(0,229,160,0.06);border-color:rgba(0,229,160,0.15)}
-.health-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.health-item.err .health-icon{background:rgba(255,45,45,0.15)}
-.health-item.warn .health-icon{background:rgba(245,200,66,0.12)}
-.health-item.ok .health-icon{background:rgba(0,229,160,0.1)}
-.health-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
-.health-item.err .health-label{color:var(--red)}
-.health-item.warn .health-label{color:var(--gold)}
-.health-item.ok .health-label{color:var(--green)}
-.health-msg{font-size:13px;color:var(--text2);line-height:1.5}
-.health-fix{font-family:'DM Mono',monospace;font-size:11px;margin-top:6px;cursor:pointer;transition:color .2s}
-.health-item.err .health-fix{color:var(--red)} .health-item.warn .health-fix{color:var(--gold)}
-.health-fix:hover{text-decoration:underline}
-
-
-/* COMPARE MODAL */
-.cmp-overlay{display:none;position:fixed;inset:0;z-index:400;
-  background:var(--overlay-bg);backdrop-filter:blur(12px);
-  align-items:center;justify-content:center;overflow-y:auto;padding:24px}
-.cmp-overlay.open{display:flex}
-.cmp-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;
-  max-width:1100px;width:100%;animation:fadeUp .3s ease;position:relative;overflow:hidden}
-.cmp-head{padding:24px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.cmp-head h3{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--text)}
-.cmp-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;transition:color .2s}
-.cmp-close:hover{color:var(--text)}
-.cmp-search{padding:20px 32px;border-bottom:1px solid var(--border);display:flex;gap:12px}
-.cmp-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:12px 16px;outline:none;transition:border-color .2s}
-.cmp-input:focus{border-color:rgba(0,212,255,0.5)}
-.cmp-input::placeholder{color:var(--muted)}
-.btn-cmp-load{background:linear-gradient(135deg,var(--cyan),#0099cc);color:#070b14;border:none;
-  border-radius:var(--radius-sm);padding:12px 24px;font-family:'Bebas Neue',sans-serif;font-size:16px;
-  letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:transform .2s}
-.btn-cmp-load:hover{transform:translateY(-1px)}
-.btn-cmp-load:disabled{opacity:.5;cursor:default;transform:none}
-.cmp-body{padding:24px 32px;display:none}
-.cmp-body.show{display:block}
-.cmp-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:24px}
-@media(max-width:700px){.cmp-cols{grid-template-columns:1fr}}
-.cmp-ch-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.cmp-ch-avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;
-  background:linear-gradient(135deg,var(--red),var(--purple));
-  display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff}
-.cmp-ch-avatar img{width:100%;height:100%;object-fit:cover}
-.cmp-ch-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--text)}
-.cmp-ch-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)}
-.cmp-you-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--green);
-  background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);border-radius:10px;padding:2px 8px}
-.cmp-stat-grid{display:flex;flex-direction:column;gap:8px}
-.cmp-stat-row{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)}
-.cmp-stat-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);letter-spacing:.5px}
-.cmp-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
-.cmp-stat-val.win{color:var(--green)} .cmp-stat-val.lose{color:var(--red)} .cmp-stat-val.tie{color:var(--text)}
-.cmp-radar-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-.cmp-radar-panel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.cmp-radar-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;margin-bottom:12px}
-.cmp-insight-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.cmp-insight-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--cyan);margin-bottom:12px}
-.cmp-insight-list{display:flex;flex-direction:column;gap:8px}
-.cmp-insight-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text2);line-height:1.5}
-.cmp-insight-item strong{color:var(--text)}
-.cmp-loading{text-align:center;padding:40px;font-family:'DM Mono',monospace;font-size:13px;color:var(--text2);display:none}
-.cmp-loading.show{display:block}
-
-/* CHANNEL PICKER */
-.ch-picker-item{display:flex;align-items:center;gap:14px;padding:14px 16px;
-  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
-  cursor:pointer;transition:all .2s}
-.ch-picker-item:hover{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.04)}
-.ch-picker-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--border)}
-.ch-picker-avatar-fb{width:44px;height:44px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,var(--red),var(--purple));
-  display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff}
-.ch-picker-info h4{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
-.ch-picker-info p{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)}
-.ch-picker-arrow{margin-left:auto;color:var(--cyan);font-size:18px}
-
-
-
-/* SCROLLBAR & FOOTER */
-::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--muted);border-radius:3px}
-footer{text-align:center;padding:40px 24px;font-size:12px;color:var(--muted);
-  font-family:'DM Mono',monospace;border-top:1px solid var(--border);position:relative;z-index:1}
-footer span{color:var(--red)}
-</style>
+    @media(max-width:900px){
+      .row{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
+  <nav>
+    <div class="logo">Face<span style="opacity:.45;-webkit-text-fill-color:var(--text)">IQ</span></div>
+    <div class="badge">REAL-TIME FACEBOOK PAGE ANALYTICS</div>
+  </nav>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">Tube<span>IQ</span></div>
-  <div class="nav-right">
-    <select class="theme-select" id="themeModeSelect" onchange="setThemeMode(this.value)">
-      <option value="auto">AUTO</option>
-      <option value="dark">NIGHT</option>
-      <option value="light">DAY</option>
-    </select>
-    <div class="nav-badge">REAL-TIME YOUTUBE ANALYTICS</div>
-    <div class="nav-user-pill" id="navUserPill">
-      <img id="navUserImg" src="" alt="">
-      <span id="navUserName"></span>
-      <button class="nav-logout" onclick="logoutGoogle()" title="Sign out">✕</button>
-    </div>
-    <button class="nav-login-btn" id="navLoginBtn" onclick="openLoginModal()">
-      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Sign in
-    </button>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-eyebrow">🔬 Channel Intelligence Platform</div>
-  <h1 class="hero-title">DECODE YOUR<br><span class="accent">YOUTUBE</span><br><span class="accent2">CHANNEL</span></h1>
-  <p class="hero-sub">Enter any YouTube channel ID to unlock deep niche analysis, real performance insights, and AI-powered content recommendations.</p>
-  <div class="search-wrap">
-    <div class="search-inner">
-      <input type="text" id="channelInput" placeholder="UCxxxxxxxxxxxxxxxxxxxxxx · channel ID or @handle" spellcheck="false"
-        onkeydown="if(event.key==='Enter')startAnalysis()">
-      <button class="btn-analyze" onclick="startAnalysis()">ANALYZE →</button>
-    </div>
-    <p class="hint">Try: <a href="#" aria-label="Load MrBeast channel demo" onclick="demoLoad('UCX6OQ3DkcsbYNE6H8uQQuVA');return false;">@MrBeast</a> · <a href="#" aria-label="Load Veritasium channel demo" onclick="demoLoad('UCHnyfMqiRRG1u-2MsSQLbXA');return false;">@Veritasium</a> · <a href="#" aria-label="Load Linus Tech Tips channel demo" onclick="demoLoad('UCXuqSBlHAE6Xw-yeJA0Tunw');return false;">@LinusTechTips</a></p>
-  </div>
-  <div class="hero-divider"><span>OR ANALYZE YOUR OWN CHANNEL</span></div>
-  <button class="btn-google-login" onclick="openLoginModal()">
-    <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-    Sign in with Google to get personalized video recommendations
-    <span class="gl-badge">OWNER ONLY</span>
-  </button>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="num">94%</div><div class="lbl">Niche Accuracy</div></div>
-    <div class="hero-stat"><div class="num">12K+</div><div class="lbl">Channels Analyzed</div></div>
-    <div class="hero-stat"><div class="num">0.9+</div><div class="lbl">Min Confidence</div></div>
-    <div class="hero-stat"><div class="num">50+</div><div class="lbl">Pattern Insights</div></div>
-  </div>
-</section>
-
-<!-- LOADING -->
-<div id="loading">
-  <div class="loader-ring"></div>
-  <div class="loader-text">ANALYZING CHANNEL</div>
-  <div class="loader-steps">
-    <div class="step-item" id="s1"><div class="step-dot"></div>Fetching channel data via YouTube API…</div>
-    <div class="step-item" id="s2"><div class="step-dot"></div>Aggregating monthly performance metrics…</div>
-    <div class="step-item" id="s3"><div class="step-dot"></div>Computing content pattern insights…</div>
-    <div class="step-item" id="s4"><div class="step-dot"></div>Classifying channel niche from real categories…</div>
-    <div class="step-item" id="s5"><div class="step-dot"></div>Building AI content analysis…</div>
-  </div>
-</div>
-<div id="srStatus" class="sr-only" aria-live="polite"></div>
-
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="dash-header">
-    <div class="channel-identity">
-      <div class="channel-avatar" id="avatarEl"></div>
-      <div class="channel-meta">
-        <h2 id="channelName">—</h2>
-        <p id="channelSub">—</p>
-        <div class="verified-badge" id="verifiedBadge">✓ OWNER VERIFIED VIA GOOGLE</div>
-      </div>
-    </div>
-    <div class="dash-actions">
-      <button class="compare-btn" id="compareBtn" onclick="startCompare()" style="display:none">⇄ COMPARE CHANNEL</button>
-      <button class="back-btn" onclick="goBack()">← NEW ANALYSIS</button>
-    </div>
-  </div>
-
-  <div class="kpi-grid" id="kpiGrid"></div>
-
-  <div class="grid-3">
-    <div class="panel" id="nichePanel">
-      <div class="panel-title">NICHE CLASSIFICATION</div>
-      <div class="panel-sub">REAL CATEGORY ANALYSIS</div>
-      <div class="niche-main">
-        <div class="niche-icon" id="nicheIcon">🔬</div>
-        <div><div class="niche-name" id="nicheName">—</div><div class="niche-conf" id="nicheConf">—</div></div>
-      </div>
-      <div class="confidence-bar" style="margin-top:20px;">
-        <div class="conf-label"><span>MODEL CONFIDENCE</span><span id="confPct">—</span></div>
-        <div class="bar-track"><div class="bar-fill" id="confBar" style="width:0%"></div></div>
-      </div>
-      <div class="niche-tags" id="nicheTags"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">CHANNEL METRICS RADAR</div>
-      <div class="panel-sub">NORMALIZED SCORE / 100</div>
-      <div class="radar-wrap"><canvas id="radarChart" width="220" height="220"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">CONTENT MIX</div>
-      <div class="panel-sub">VIDEO CATEGORY DISTRIBUTION</div>
-      <div class="radar-wrap"><canvas id="donutChart" width="220" height="220"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-title">ENGAGEMENT OVER TIME</div>
-      <div class="panel-sub">LAST 12 MONTHS · REAL ENGAGEMENT RATE % + VIDEO COUNT</div>
-      <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
-      <button class="btn-powerbi" onclick="exportPowerBIData()">EXPORT THIS CHART FOR POWER BI (CSV)</button>
-    </div>
-    <div class="panel">
-      <div class="panel-title">CONTENT PATTERN INSIGHTS</div>
-      <div class="panel-sub">PLAIN LANGUAGE · BASED ON REAL VIDEO PERFORMANCE</div>
-      <div class="rule-list" id="ruleList"></div>
-    </div>
-  </div>
-
-  <!-- RECOMMENDATIONS — only shown for owner's own channel -->
-  <div id="recPanel">
-    <div class="panel">
-      <div class="panel-title">🎬 VIDEO RECOMMENDATION ENGINE</div>
-      <div class="panel-sub">TELL US YOUR NEXT CONTENT IDEA → GET FULLY OPTIMIZED VIDEO PACKAGE</div>
-      <div class="rec-wizard">
-        <div class="rec-wizard-title">WHAT ARE YOU PLANNING TO POST NEXT?</div>
-        <p>Describe your content idea and we'll generate the perfect title, description, tags, thumbnail text, and upload strategy — all tailored to your channel's patterns and audience.</p>
-        <div class="wizard-field">
-          <label>Content Idea / Topic *</label>
-          <textarea class="wizard-input" id="wizTopicInput" rows="3"
-            placeholder="e.g. I filmed myself learning to code an AI chatbot from scratch in 30 days, documenting every step…"></textarea>
+  <section id="hero">
+    <div class="hero-card">
+      <div class="eyebrow">Meta Graph Intelligence</div>
+      <h1>DECODE YOUR <span class="acc">FACEBOOK</span> PAGE</h1>
+      <p class="sub">Analyze any Facebook Page using Graph API data to see posting performance, engagement trends, content mix, and actionable growth insights.</p>
+      <div class="search-wrap">
+        <div class="row">
+          <input class="input" id="pageInput" placeholder="Page username, Page ID, or full facebook.com/page URL" onkeydown="if(event.key==='Enter')startAnalysis()" />
+          <input class="input" id="tokenInput" placeholder="Facebook Graph API access token (required)" onkeydown="if(event.key==='Enter')startAnalysis()" />
+          <button class="btn" onclick="startAnalysis()">ANALYZE →</button>
         </div>
-        <div class="wizard-row">
-          <div class="wizard-field">
-            <label>Video Format</label>
-            <select class="wizard-input" id="wizFormat">
-              <option value="tutorial">Tutorial / How-to</option>
-              <option value="vlog">Vlog / Day-in-life</option>
-              <option value="challenge">Challenge</option>
-              <option value="review">Review / Comparison</option>
-              <option value="documentary">Mini Documentary</option>
-              <option value="reaction">Reaction / Commentary</option>
-              <option value="list">Listicle / Ranking</option>
-              <option value="story">Story / Personal</option>
-            </select>
-          </div>
-          <div class="wizard-field">
-            <label>Target Audience Feel</label>
-            <select class="wizard-input" id="wizAudience">
-              <option value="general">General Audience</option>
-              <option value="beginners">Complete Beginners</option>
-              <option value="intermediate">Intermediate Level</option>
-              <option value="advanced">Advanced / Expert</option>
-              <option value="kids">Young / Kids</option>
-              <option value="professionals">Professionals</option>
-            </select>
-          </div>
+        <div class="row" style="grid-template-columns:1fr">
+          <input class="input" id="geminiKeyInput" placeholder="Gemini API key (optional, only for AI ideas)" />
         </div>
-        <div class="wizard-field">
-          <label>Any keywords you want to rank for? (optional)</label>
-          <input type="text" class="wizard-input" id="wizKeywords" placeholder="e.g. AI coding, beginner programming, learn python 2025">
+        <p class="hint">Try: <a href="#" onclick="demoLoad('Meta');return false;">Meta</a> · <a href="#" onclick="demoLoad('NASA');return false;">NASA</a> · <a href="#" onclick="demoLoad('FCBarcelona');return false;">FCBarcelona</a></p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="statPages">30K+</b><span>PAGES TRACKED</span></div>
+        <div class="stat"><b>12 MO</b><span>TREND WINDOW</span></div>
+        <div class="stat"><b>50</b><span>POSTS ANALYZED</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="loading">
+    <div class="loader"></div>
+    <div id="loadingText">Fetching Facebook page data…</div>
+  </div>
+
+  <main id="dashboard">
+    <div class="head">
+      <div class="id-wrap">
+        <div class="avatar" id="avatarEl">F</div>
+        <div class="meta">
+          <h2 id="pageName">—</h2>
+          <p id="pageSub">—</p>
+          <div class="pill" id="verifiedPill" style="display:none">✓ VERIFIED PAGE</div>
         </div>
-        <button class="btn-generate" id="generateBtn" onclick="generateRecommendations()">GENERATE FULL VIDEO PACKAGE →</button>
       </div>
-      <div class="rec-results" id="recResults"></div>
+      <button class="btn-ghost" onclick="goBack()">← NEW ANALYSIS</button>
     </div>
-  </div>
 
-  <div class="panel">
-    <div class="panel-title">RECENT VIDEO PERFORMANCE</div>
-    <div class="panel-sub">LATEST 8 UPLOADS · REAL DATA</div>
-    <div style="overflow-x:auto;">
-      <table class="perf-table">
-        <thead><tr><th>TITLE</th><th>VIEWS</th><th>LIKES</th><th>ENG RATE</th><th>STATUS</th></tr></thead>
-        <tbody id="perfBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+    <section class="kpis" id="kpiGrid"></section>
 
-<!-- CHANNEL HEALTH AUDIT — owner only -->
-<div id="healthPanel">
-  <div class="panel">
-    <div class="panel-title">⚠ CHANNEL HEALTH REPORT</div>
-    <div class="panel-sub" id="healthSub">AUTOMATED AUDIT · OWNER ANALYSIS · SHOWS WHAT TO FIX</div>
-    <div class="health-grid" id="healthGrid"></div>
-  </div>
-</div>
-
-
-<!-- CHATBOT FAB -->
-<button class="chat-fab" id="chatFab" onclick="toggleChat()">
-  🤖<div class="chat-notif">AI</div>
-</button>
-
-<!-- CHAT PANEL -->
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-head">
-    <div class="chat-head-avatar">🤖</div>
-    <div class="chat-head-info">
-      <h4>TubeIQ AI ADVISOR</h4>
-      <p id="chatStatusLine" style="font-family:DM Mono,monospace;font-size:10px;color:var(--green);letter-spacing:1px">● POWERED BY GEMINI AI</p>
-    </div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
-  </div>
-  <div class="chat-msgs" id="chatMsgs"></div>
-  <div class="chat-suggestions" id="chatSuggestions"></div>
-  <div class="chat-input-wrap">
-    <textarea class="chat-input" id="chatInput" placeholder="Ask about your channel…" rows="1"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"
-      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-    <button class="chat-send" id="chatSendBtn" onclick="sendChat()">➤</button>
-  </div>
-</div>
-
-<!-- GOOGLE LOGIN MODAL -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeLoginModal()">✕</button>
-
-    <!-- STATE 1: Initial sign-in prompt -->
-    <div id="ls1">
-      <h3>SIGN IN WITH GOOGLE</h3>
-      <p>Connect your Google account to auto-detect and analyze <strong>your</strong> YouTube channel with owner-authorized access, full health audits, and a structured growth fix plan.</p>
-      <div class="modal-perms">
-        <div class="modal-perm"><div class="modal-perm-icon">🎬</div>Auto-detects your YouTube channel via <code style="color:var(--cyan)">mine=true</code></div>
-        <div class="modal-perm"><div class="modal-perm-icon">⚠</div>Full channel health audit — finds what's broken</div>
-        <div class="modal-perm"><div class="modal-perm-icon">🔒</div>Read-only · No changes ever made to your channel</div>
+    <section class="grid">
+      <div class="panel">
+        <h3>ENGAGEMENT TREND</h3>
+        <div class="subline">LAST 12 MONTHS · POSTS + ENGAGEMENT RATE</div>
+        <canvas id="lineChart"></canvas>
       </div>
-      <div id="googleSignInBtn"></div>
-      <p class="modal-note">Only Google accounts with a YouTube channel are accepted</p>
-    </div>
+      <div class="panel">
+        <h3>CONTENT MIX</h3>
+        <div class="subline">POST TYPE DISTRIBUTION</div>
+        <canvas id="mixChart" height="260"></canvas>
+      </div>
+    </section>
 
-    <!-- STATE 2: Fetching spinner -->
-    <div id="ls2" style="display:none;text-align:center;padding:20px 0">
-      <div class="loader-ring" style="margin:0 auto 20px"></div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--text);margin-bottom:8px">FINDING YOUR CHANNEL</div>
-      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)" id="lsMsg">Requesting YouTube access…</div>
-    </div>
+    <section class="grid">
+      <div class="panel">
+        <h3>INSIGHT SNAPSHOT</h3>
+        <div class="subline">HEURISTIC PERFORMANCE PATTERNS</div>
+        <div class="insights" id="insightList"></div>
+      </div>
+      <div class="panel">
+        <h3>AI POST IDEAS</h3>
+        <div class="subline">GEMINI-POWERED FACEBOOK CONTENT SUGGESTIONS</div>
+        <div class="idea-controls">
+          <input class="input" id="ideaInput" placeholder="What campaign/theme do you want ideas for?" />
+          <button class="btn" id="ideaBtn" onclick="generateIdeas()">GENERATE</button>
+        </div>
+        <div class="idea-results" id="ideaResults"></div>
+      </div>
+    </section>
 
-    <!-- STATE 3: Multiple channels — pick one -->
-    <div id="ls3" style="display:none">
-      <h3>PICK YOUR CHANNEL</h3>
-      <p style="margin-bottom:16px">Multiple YouTube channels found on your account. Select the one you want to analyze:</p>
-      <div id="chPickerList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
-    </div>
+    <section class="panel">
+      <h3>RECENT POST PERFORMANCE</h3>
+      <div class="subline">LATEST 10 POSTS · REACTIONS / COMMENTS / SHARES</div>
+      <div style="overflow-x:auto">
+        <table class="post-table">
+          <thead>
+            <tr><th>POST</th><th>TYPE</th><th>REACTIONS</th><th>COMMENTS</th><th>SHARES</th><th>ENG RATE</th></tr>
+          </thead>
+          <tbody id="postBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-    <!-- STATE 4: No channel found — blocked -->
-    <div id="ls4" style="display:none;text-align:center;padding:16px 0">
-      <div style="font-size:48px;margin-bottom:16px">🚫</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--red);margin-bottom:8px">NO YOUTUBE CHANNEL FOUND</div>
-      <p style="margin-bottom:20px">This Google account has no YouTube channel linked to it. TubeIQ requires a YouTube channel to use owner features.</p>
-      <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)">You can still analyze any public channel without logging in.</p>
-      <button style="margin-top:20px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);padding:10px 24px;font-family:Outfit,sans-serif;font-size:13px;cursor:pointer" onclick="lsShow(1);logoutGoogle()">← TRY DIFFERENT ACCOUNT</button>
-    </div>
-
-  </div>
-</div>
-
-
-
-
-
-<footer>TubeIQ · YouTube Channel Intelligence · Built with <span>♥</span> using Gemini AI · YouTube Data API v3</footer>
+  <footer>FaceIQ · Facebook Page Intelligence · Built with <span style="color:var(--fb)">♥</span> using Gemini AI + Meta Graph API</footer>
 
 <script>
+  const FB_GRAPH = 'https://graph.facebook.com/v20.0';
+  const DEFAULT_FB_TOKEN = '';
+  function getGemKey(){
+    return (document.getElementById('geminiKeyInput')?.value||'').trim();
+  }
 
-/* ══════════════════════════════════════════════════
-   TubeIQ — Analytics + Smart Recommendations + AI Chat
-   ══════════════════════════════════════════════════ */
+  let charts = {};
+  let pageContext = null;
 
-// ─── CONFIG ───────────────────────────────────────
-// 1. YouTube Data API key (already set)
-const API_KEY = 'AIzaSyAY6dcunw97THYJ42Y6VuCckOjlUP05Fpc';
-// 2. Google OAuth Client ID — get from console.cloud.google.com
-//    Replace with your own, then Google Login will work
-const G_CLIENT = '574845010481-hiu0cmuml49cv869uupfgefcd69enbkp.apps.googleusercontent.com';
-// 3. Gemini API key for AI features (stored in split form)
-var _gk1='AIzaSyAxWuWntzZjSX9',_gk2='ZQ4N12fKIH1NvyDpzTG8';
-function getGemKey(){return _gk1+_gk2}
-// ──────────────────────────────────────────────────
-
-const YT = 'https://www.googleapis.com/youtube/v3';
-
-const NICHES = {
-  'Entertainment':        {icon:'🎬',tags:['Comedy','Vlogs','Challenges','Shorts','Reacts']},
-  'Science & Technology': {icon:'🔬',tags:['Tutorials','Reviews','Deep Dives','Explainers','AI']},
-  'Gaming':               {icon:'🎮',tags:["Let's Play",'Reviews','Streams','Walkthroughs','News']},
-  'Education':            {icon:'📚',tags:['How-to','Explainers','Lectures','Concepts','Documentaries']},
-  'Music':                {icon:'🎵',tags:['Covers','Originals','Reactions','Reviews','Tutorials']},
-  'Finance & Business':   {icon:'💹',tags:['Investing','Side Hustles','Analysis','Crypto','News']},
-  'Health & Fitness':     {icon:'💪',tags:['Workouts','Nutrition','Mindset','Reviews','Challenges']},
-  'Travel & Lifestyle':   {icon:'✈️',tags:['Vlogs','Tours','Tips','Luxury','Budgets']},
-};
-const CAT_NICHE = {'1':'Entertainment','2':'Travel & Lifestyle','10':'Music','15':'Travel & Lifestyle',
-  '17':'Health & Fitness','19':'Travel & Lifestyle','20':'Gaming','22':'Entertainment','23':'Entertainment',
-  '24':'Entertainment','25':'Finance & Business','26':'Health & Fitness','27':'Education','28':'Science & Technology','29':'Education'};
-const CAT_LABEL = {'1':'Film & Animation','2':'Autos','10':'Music','15':'Pets & Animals','17':'Sports',
-  '19':'Travel','20':'Gaming','22':'Vlogs','23':'Comedy','24':'Entertainment','25':'News',
-  '26':'Howto & Style','27':'Education','28':'Science & Tech','29':'Nonprofits'};
-
-// ── App State ──
-let charts = {};
-let channelContext = null;   // currently displayed channel data
-let googleUser        = null;
-let ownerChannelId    = null;
-let googleAccessToken = null;
-let ownerChannels     = [];
-let chatHistory    = [];
-let isOwnChannel   = false;  // true only when viewing the owner's own channel
-let themeMode      = 'auto';
-
-// ── Utils ──
-function fmtNum(n){n=parseInt(n)||0;if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toString()}
-function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function announceStatus(msg){const s=document.getElementById('srStatus');if(!s)return;s.textContent='';setTimeout(function(){s.textContent=msg;},20)}
-function getThemeVar(cssVarName,fallback){const v=getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim();return v||fallback}
-function getThemePalette(){
-  return{
-    secondaryTextColor:getThemeVar('--text2','#8892a4'),
-    gridLineColor:getThemeVar('--grid-line','rgba(255,255,255,0.04)'),
-    strongGridLineColor:getThemeVar('--grid-line-strong','rgba(255,255,255,0.07)'),
-    panelBackgroundColor:getThemeVar('--bg2','#0d1220')
+  const NICHE_KEYWORDS = {
+    'News & Media':['news','breaking','update','headline','report'],
+    'Sports':['match','goal','team','league','player','coach'],
+    'Education':['learn','guide','tutorial','lesson','course','explained'],
+    'Entertainment':['show','episode','funny','trailer','movie','music'],
+    'Business':['offer','sale','product','service','launch','customer'],
+    'Community':['event','support','volunteer','community','local','initiative']
   };
-}
 
-/* ════════════════════════════════
-   THEME MODE (DAY / NIGHT / AUTO)
-   ════════════════════════════════ */
-const THEME_KEY='tubeiq-theme-mode';
-function applyTheme(mode){
-  const root=document.documentElement;
-  const prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const effective=mode==='auto'?(prefersDark?'dark':'light'):mode;
-  root.setAttribute('data-theme',effective);
-}
-function getEffectiveTheme(){
-  const attr=document.documentElement.getAttribute('data-theme');
-  if(attr==='dark'||attr==='light')return attr;
-  const prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
-  return prefersDark?'dark':'light';
-}
-function refreshThemeSensitiveUI(){
-  const dashboardEl=document.getElementById('dashboard');
-  renderGoogleSignInButton(true);
-  if(channelContext&&dashboardEl&&getComputedStyle(dashboardEl).display!=='none')renderCharts(channelContext);
-}
-function setThemeMode(mode){
-  themeMode=(mode==='dark'||mode==='light'||mode==='auto')?mode:'auto';
-  localStorage.setItem(THEME_KEY,themeMode);
-  const sel=document.getElementById('themeModeSelect');if(sel)sel.value=themeMode;
-  applyTheme(themeMode);
-  refreshThemeSensitiveUI();
-  announceStatus('Theme set to '+themeMode+' mode.');
-}
-function initThemeMode(){
-  const saved=localStorage.getItem(THEME_KEY)||'auto';
-  setThemeMode(saved);
-  if(window.matchMedia){
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){
-      if(themeMode==='auto'){
-        applyTheme('auto');
-        refreshThemeSensitiveUI();
-      }
+  function fmtNum(n){n=Number(n)||0;if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return String(Math.round(n));}
+  function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+
+  function getToken(){
+    const input=document.getElementById('tokenInput').value.trim();
+    return input||DEFAULT_FB_TOKEN;
+  }
+
+  function normalizeInput(raw){
+    let s=(raw||'').trim();
+    if(!s)return '';
+    s=s.replace(/^https?:\/\/(www\.)?facebook\.com\//i,'').replace(/[/?#].*$/,'');
+    s=s.replace(/^@/,'');
+    return s;
+  }
+
+  async function fbFetch(path,params,token){
+    const accessToken=token||getToken();
+    if(!accessToken)throw new Error('Facebook access token is required. Paste it in the token field.');
+    const cleanPath=String(path).replace(/^\/+/,'');
+    const u=new URL(FB_GRAPH+'/'+cleanPath);
+    Object.entries(params||{}).forEach(([k,v])=>u.searchParams.set(k,v));
+    u.searchParams.set('access_token',accessToken);
+    const res=await fetch(u.toString());
+    const data=await res.json();
+    if(!res.ok||data.error){
+      const msg=data?.error?.message||('HTTP '+res.status);
+      throw new Error(msg);
+    }
+    return data;
+  }
+
+  async function resolvePageId(raw){
+    const value=normalizeInput(raw);
+    if(!value)throw new Error('Enter a Facebook page username or ID.');
+    if(/^\d+$/.test(value))return value;
+    const info=await fbFetch(value,{fields:'id,name'});
+    if(!info.id)throw new Error('Facebook page not found.');
+    return info.id;
+  }
+
+  async function fetchPageInfo(pageId){
+    return fbFetch(pageId,{fields:'id,name,username,about,category,fan_count,followers_count,verification_status,picture{url}'});
+  }
+
+  async function fetchPagePosts(pageId,maxPosts){
+    const limit=Math.min(maxPosts||50,100);
+    const j=await fbFetch(pageId+'/posts',{fields:'id,message,created_time,type,shares,permalink_url,reactions.summary(true).limit(0),comments.summary(true).limit(0)',limit:String(limit)});
+    return j.data||[];
+  }
+
+  function toPostMetrics(posts,followers){
+    return posts.map(p=>{
+      const reactions=Number(p?.reactions?.summary?.total_count||0);
+      const comments=Number(p?.comments?.summary?.total_count||0);
+      const shares=Number(p?.shares?.count||0);
+      const score=reactions+(comments*2)+(shares*3);
+      const engRate=followers>0?((score/followers)*100):0;
+      const msg=(p.message||'').trim();
+      const title=(msg.split('\n')[0]||'Untitled post').slice(0,120);
+      return {
+        id:p.id,
+        title,
+        message:msg,
+        createdAt:p.created_time,
+        type:(p.type||'status').toUpperCase(),
+        permalink:p.permalink_url||'#',
+        reactions,comments,shares,score,
+        engagementRate:Number(engRate.toFixed(3)),
+        messageLength:msg.length
+      };
     });
   }
-}
 
-/* ════════════════════════════════
-   YOUTUBE API
-   ════════════════════════════════ */
-async function ytFetch(ep,params){
-  const u=new URL(YT+'/'+ep);
-  Object.entries({...params,key:API_KEY}).forEach(([k,v])=>u.searchParams.set(k,v));
-  const r=await fetch(u.toString());const j=await r.json();
-  if(j.error)throw new Error(j.error.message);return j;
-}
-
-async function resolveChannelId(raw){
-  const i=raw.trim();
-  if(/^UC[\w-]{22}$/.test(i))return i;
-  const handle=i.startsWith('@')?i:('@'+i);
-  if(handle.length>1){
-    const h=await ytFetch('channels',{part:'id',forHandle:handle});
-    if(h.items?.length)return h.items[0].id;
-    if(i.startsWith('@'))throw new Error('Handle "'+i+'" not found.');
-  }
-  const j=await ytFetch('channels',{part:'id',forUsername:i});if(j.items?.length)return j.items[0].id;
-  throw new Error('Channel not found. Try a channel ID (UC…) or @handle.');
-}
-async function fetchChannelInfo(id){
-  const j=await ytFetch('channels',{part:'snippet,statistics',id});
-  if(!j.items?.length)throw new Error('Channel not found.');return j.items[0];
-}
-async function fetchVideoDetails(channelId,max){
-  const s=await ytFetch('search',{part:'id',channelId,type:'video',order:'date',maxResults:max||50});
-  const ids=(s.items||[]).map(i=>i.id.videoId).filter(Boolean);if(!ids.length)return[];
-  const v=await ytFetch('videos',{part:'snippet,statistics,contentDetails',id:ids.join(',')});return v.items||[];
-}
-
-/* ════════════════════════════════
-   ANALYTICS ENGINE
-   ════════════════════════════════ */
-function detectNiche(videos){
-  const t={};videos.forEach(v=>{const c=(v.snippet?.categoryId)||'24';const n=CAT_NICHE[c]||'Entertainment';t[n]=(t[n]||0)+1});
-  const s=Object.entries(t).sort((a,b)=>b[1]-a[1]);
-  if(!s.length)return{niche:'Entertainment',confidence:60};
-  return{niche:s[0][0],confidence:clamp(Math.round((s[0][1]/videos.length)*100),52,98)};
-}
-function buildContentMix(videos){
-  const t={};videos.forEach(v=>{const c=(v.snippet?.categoryId)||'24';const l=CAT_LABEL[c]||'Other';t[l]=(t[l]||0)+1});
-  const top=Object.entries(t).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const tot=top.reduce((s,p)=>s+p[1],0)||1;const m={};top.forEach(p=>m[p[0]]=Math.round(p[1]/tot*100));return m;
-}
-function calcUploadFreq(videos){
-  if(videos.length<2)return'—';
-  const d=videos.map(v=>new Date(v.snippet.publishedAt)).sort((a,b)=>b-a);
-  const g=[];for(let i=0;i<Math.min(d.length-1,20);i++)g.push((d[i]-d[i+1])/86400000);
-  const avg=g.reduce((s,x)=>s+x,0)/g.length;
-  if(avg<=1)return'1+/day';if(avg<=3.5)return Math.round(7/avg)+'/week';if(avg<=14)return Math.round(30/avg)+'/month';
-  return'Every '+Math.round(avg)+'d';
-}
-function calcAvgEngagement(videos){
-  const r=videos.map(v=>{const vi=parseInt(v.statistics?.viewCount||0);const li=parseInt(v.statistics?.likeCount||0);return vi>0?(li/vi)*100:null}).filter(x=>x!==null);
-  if(!r.length)return 0;return r.reduce((s,x)=>s+x,0)/r.length;
-}
-function buildRadarScores(videos,cs){
-  const er=calcAvgEngagement(videos);const eng=clamp(Math.round((er/5)*100),5,100);
-  const d=videos.map(v=>new Date(v.snippet.publishedAt)).sort((a,b)=>b-a);
-  const g=[];for(let i=0;i<Math.min(d.length-1,15);i++)g.push((d[i]-d[i+1])/86400000);
-  const ag=g.reduce((s,x)=>s+x,0)/(g.length||1);
-  const std=Math.sqrt(g.reduce((s,x)=>s+Math.pow(x-ag,2),0)/(g.length||1));
-  const con=clamp(Math.round(100-(ag>0?std/ag:1)*45),10,100);
-  const at=videos.reduce((s,v)=>s+((v.snippet?.tags?.length)||0),0)/(videos.length||1);
-  const seo=clamp(Math.round((at/15)*100),0,100);
-  const ac=videos.reduce((s,v)=>{const vi=parseInt(v.statistics?.viewCount||0);const co=parseInt(v.statistics?.commentCount||0);return s+(vi>0?(co/vi)*100:0)},0)/(videos.length||1);
-  const thumb=clamp(Math.round((ac/0.5)*100),5,100);
-  const subs=parseInt(cs?.subscriberCount||1);
-  const av=videos.reduce((s,v)=>s+parseInt(v.statistics?.viewCount||0),0)/(videos.length||1);
-  const ret=clamp(Math.round((av/subs)*100),5,100);
-  const tv=parseInt(cs?.viewCount||1);const grow=clamp(Math.round((subs/(tv/1000))*8),5,100);
-  return[eng,con,seo,thumb,ret,grow];
-}
-function buildMonthlyChart(videos){
-  const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const now=new Date(),bk={};
-  for(let i=11;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);bk[d.getFullYear()+'-'+d.getMonth()]={views:0,likes:0,videos:0}}
-  videos.forEach(v=>{const d=new Date(v.snippet.publishedAt);const k=d.getFullYear()+'-'+d.getMonth();
-    if(bk[k]){bk[k].views+=parseInt(v.statistics?.viewCount||0);bk[k].likes+=parseInt(v.statistics?.likeCount||0);bk[k].videos++}});
-  const keys=Object.keys(bk);
-  return{
-    labels:keys.map(k=>M[parseInt(k.split('-')[1])]),
-    viewsData:keys.map(k=>bk[k].views),
-    likesData:keys.map(k=>bk[k].likes),
-    videosData:keys.map(k=>bk[k].videos),
-    engagementData:keys.map(k=>bk[k].views>0?Number(((bk[k].likes/bk[k].views)*100).toFixed(2)):0),
-  };
-}
-function buildContentInsights(videos){
-  const avg=calcAvgEngagement(videos)||0;
-  const P=[
-    {l:'Titles with numbers',f:v=>/\d+/.test(v.snippet?.title||'')},
-    {l:'Question-style titles',f:v=>(v.snippet?.title||'').includes('?')},
-    {l:'Short titles (<50 chars)',f:v=>(v.snippet?.title||'').length>0&&(v.snippet?.title||'').length<50},
-    {l:'Rich tags (10+)',f:v=>((v.snippet?.tags?.length)||0)>=10},
-    {l:'Long descriptions (400+ chars)',f:v=>((v.snippet?.description?.length)||0)>=400},
-    {l:'Emoji in title',f:v=>{try{return/\p{Emoji}/u.test(v.snippet?.title||'')}catch{return false}}},
-  ];
-  const insights=P.map(function(p){
-    const group=videos.filter(v=>p.f(v));
-    const other=videos.filter(v=>!p.f(v));
-    if(group.length<3||other.length<3)return null;
-    const ge=calcAvgEngagement(group),oe=calcAvgEngagement(other);
-    const delta=parseFloat((ge-oe).toFixed(2));
-    const dir=delta>=0?'higher':'lower';
-    const support=Math.round((group.length/Math.max(videos.length,1))*100);
-    return{
-      title:p.l,
-      summary:p.l+' videos show '+Math.abs(delta).toFixed(2)+'% '+dir+' engagement than other uploads.',
-      impact:(delta>=0?'+':'')+delta.toFixed(2)+'% vs baseline',
-      support:support+'% of recent uploads'
-    };
-  }).filter(Boolean).sort(function(a,b){return parseFloat(b.impact)-parseFloat(a.impact)}).slice(0,6);
-  if(insights.length)return insights;
-  return[
-    {title:'Recent engagement baseline',summary:'Average engagement across recent uploads is '+avg.toFixed(2)+'%.',impact:avg.toFixed(2)+'% avg',support:(videos.length||0)+' videos analyzed'},
-    {title:'Posting consistency',summary:'Upload frequency is calculated from real publish dates to avoid synthetic estimates.',impact:'Real schedule data',support:(videos.length||0)+' videos analyzed'},
-  ];
-}
-
-/* ════════════════════════════════
-   MAIN DATA BUILDER
-   ════════════════════════════════ */
-async function buildRealChannelData(channelId){
-  const[chanItem,videos]=await Promise.all([fetchChannelInfo(channelId),fetchVideoDetails(channelId,50)]);
-  const cs=chanItem.statistics,sn=chanItem.snippet;
-  return{
-    channelId,
-    name:sn.title,handle:sn.customUrl||'',
-    thumbnailUrl:sn.thumbnails?.high?.url||sn.thumbnails?.medium?.url||sn.thumbnails?.default?.url||'',
-    niche:detectNiche(videos).niche,confidence:detectNiche(videos).confidence,
-    subs:parseInt(cs.subscriberCount||0),views:parseInt(cs.viewCount||0),videoCount:parseInt(cs.videoCount||0),
-    uploadFreq:calcUploadFreq(videos),engRate:calcAvgEngagement(videos).toFixed(2),
-    radarScores:buildRadarScores(videos,cs),
-    ...buildMonthlyChart(videos),
-    contentMix:buildContentMix(videos),contentInsights:buildContentInsights(videos),
-    recentVideos:videos.slice(0,8).map(v=>({title:v.snippet.title,views:parseInt(v.statistics?.viewCount||0),likes:parseInt(v.statistics?.likeCount||0)})),
-    rawVideos:videos,
-  };
-}
-
-/* ════════════════════════════════
-   UI FLOW
-   ════════════════════════════════ */
-function demoLoad(id){document.getElementById('channelInput').value=id;startAnalysis()}
-
-async function startAnalysis(){
-  const input=document.getElementById('channelInput').value.trim();
-  if(!input){document.getElementById('channelInput').focus();return}
-  showLoading();
-  try{
-    const channelId=await resolveChannelId(input);
-    const[data]=await Promise.all([buildRealChannelData(channelId),new Promise(res=>runLoadingSteps(res))]);
-    channelContext=data;chatHistory=[];
-    // Determine if this is the owner's own channel
-    isOwnChannel = !!(googleUser && ownerChannelId && ownerChannelId===channelId);
-    hideLoading();renderDashboard(data);
-  }catch(err){
-    hideLoading();document.getElementById('hero').style.display='flex';
-    alert('⚠️ '+err.message);
-  }
-}
-
-function runLoadingSteps(cb){
-  const s=['s1','s2','s3','s4','s5'],d=[0,650,1300,2000,2700];
-  s.forEach((id,i)=>setTimeout(()=>{if(i>0)document.getElementById(s[i-1]).className='step-item done';document.getElementById(id).className='step-item active'},d[i]));
-  setTimeout(()=>{document.getElementById('s5').className='step-item done';cb()},3300);
-}
-function showLoading(){
-  document.getElementById('hero').style.display='none';
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('loading').style.display='flex';
-  ['s1','s2','s3','s4','s5'].forEach(id=>document.getElementById(id).className='step-item');
-}
-function hideLoading(){document.getElementById('loading').style.display='none'}
-function goBack(){
-  Object.values(charts).forEach(c=>c.destroy());charts={};channelContext=null;isOwnChannel=false;
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('hero').style.display='flex';
-  document.getElementById('channelInput').value='';
-  document.getElementById('chatFab').classList.remove('visible');
-  document.getElementById('chatPanel').classList.remove('open');
-  document.getElementById('recResults').innerHTML='';
-}
-
-
-/* ════════════════════════════════
-   RENDER DASHBOARD
-   ════════════════════════════════ */
-function renderDashboard(data){
-  document.getElementById('dashboard').style.display='block';
-  window.scrollTo(0,0);
-
-  // Avatar
-  const av=document.getElementById('avatarEl');av.innerHTML='';
-  if(data.thumbnailUrl){
-    const img=document.createElement('img');img.src=data.thumbnailUrl;img.alt=data.name;
-    img.onerror=()=>{av.innerHTML='<span style="font-family:Bebas Neue,sans-serif;font-size:28px">'+data.name.charAt(0).toUpperCase()+'</span>'};
-    av.appendChild(img);
-  }else{av.innerHTML='<span style="font-family:Bebas Neue,sans-serif;font-size:28px">'+data.name.charAt(0).toUpperCase()+'</span>'}
-
-  document.getElementById('channelName').textContent=data.name.toUpperCase();
-  document.getElementById('channelSub').textContent=(data.handle?data.handle+'  ·  ':'')+fmtNum(data.subs)+' subscribers  ·  '+fmtNum(data.videoCount)+' videos';
-
-  // Verified badge & compare button
-  const vb=document.getElementById('verifiedBadge');
-  vb.className='verified-badge'+(isOwnChannel?' show':'');
-  document.getElementById('compareBtn').style.display=googleUser&&isOwnChannel?'block':'none';
-
-  // KPIs
-  const ec=parseFloat(data.engRate)>=3?'up':'down';
-  document.getElementById('kpiGrid').innerHTML=[
-    {label:'SUBSCRIBERS',value:fmtNum(data.subs),change:'Real-time from YouTube',cls:'up',accent:'--red'},
-    {label:'TOTAL VIEWS',value:fmtNum(data.views),change:'Lifetime channel views',cls:'up',accent:'--cyan'},
-    {label:'AVG ENGAGEMENT',value:data.engRate+'%',change:'Likes ÷ Views · last 50 videos',cls:ec,accent:'--green'},
-    {label:'UPLOAD FREQUENCY',value:data.uploadFreq,change:'Calculated from publish dates',cls:'up',accent:'--gold'},
-    {label:'NICHE CONFIDENCE',value:data.confidence+'%',change:'Category-based confidence',cls:'up',accent:'--cyan'},
-  ].map((k,i)=>`<div class="kpi-card" style="--accent-color:var(${k.accent});animation-delay:${i*0.08}s">
-    <div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div>
-    <div class="kpi-change ${k.cls}">${k.change}</div></div>`).join('');
-
-  // Niche
-  const n=NICHES[data.niche]||NICHES['Entertainment'];
-  document.getElementById('nicheIcon').textContent=n.icon;
-  document.getElementById('nicheName').textContent=data.niche.toUpperCase();
-  document.getElementById('nicheConf').textContent='✓ '+data.confidence+'% confidence · '+Math.min(50,data.rawVideos?.length||0)+' videos analyzed';
-  document.getElementById('confPct').textContent=data.confidence+'%';
-  setTimeout(()=>document.getElementById('confBar').style.width=data.confidence+'%',400);
-  document.getElementById('nicheTags').innerHTML=n.tags.map((t,i)=>`<span class="tag${i===0?' highlight':''}">${t}</span>`).join('');
-
-  // Plain-language content insights
-  document.getElementById('ruleList').innerHTML=(data.contentInsights||[]).map(function(r){
-    return `<div class="rule-item"><div class="rule-expr"><span class="bold">${esc(r.title)}</span><div style="margin-top:6px">${esc(r.summary)}</div></div>
-    <div class="rule-conf">${esc(r.impact||'')}</div><div class="rule-lift">${esc(r.support||'')}</div></div>`;
-  }).join('');
-
-  // Recommendations panel — ONLY for owner's own channel
-  const rp=document.getElementById('recPanel');
-  if(isOwnChannel){
-    rp.classList.add('show');
-    document.getElementById('recResults').innerHTML='';
-    runHealthAudit(data);
-  } else {
-    rp.classList.remove('show');
-    document.getElementById('healthPanel').classList.remove('show');
-  }
-
-  // Performance table
-  document.getElementById('perfBody').innerHTML=data.recentVideos.map(v=>{
-    const er=v.views>0?((v.likes/v.views)*100).toFixed(2):'0.00';
-    const cls=er>5?'badge-green':er>2?'badge-gold':'badge-red';
-    return`<tr><td class="title-cell">${esc(v.title)}</td><td style="color:var(--text)">${fmtNum(v.views)}</td>
-      <td style="color:var(--text)">${fmtNum(v.likes)}</td><td style="color:var(--cyan)">${er}%</td>
-      <td><span class="badge ${cls}">${er>5?'VIRAL':er>2?'GOOD':'LOW'}</span></td></tr>`;}).join('');
-
-  Object.values(charts).forEach(c=>c.destroy());charts={};
-  renderCharts(data);
-  document.getElementById('chatFab').classList.add('visible');
-  initChat(data);
-}
-
-/* ════════════════════════════════
-   CHARTS
-   ════════════════════════════════ */
-function renderCharts(d){
-  var palette=getThemePalette();
-  Chart.defaults.color=palette.secondaryTextColor;Chart.defaults.font.family="'DM Mono',monospace";
-  const lc=document.getElementById('lineChart').getContext('2d');
-  const gv=lc.createLinearGradient(0,0,0,260);gv.addColorStop(0,'rgba(255,45,45,0.25)');gv.addColorStop(1,'rgba(255,45,45,0)');
-  const gl=lc.createLinearGradient(0,0,0,260);gl.addColorStop(0,'rgba(0,212,255,0.2)');gl.addColorStop(1,'rgba(0,212,255,0)');
-  charts.line=new Chart(lc,{type:'line',data:{labels:d.labels,datasets:[
-    {label:'Engagement Rate %',data:d.engagementData,borderColor:'#ff2d2d',backgroundColor:gv,borderWidth:2,pointRadius:3,pointBackgroundColor:'#ff2d2d',tension:.4,fill:true,yAxisID:'y'},
-    {label:'Videos Uploaded',data:d.videosData,borderColor:'#00d4ff',backgroundColor:gl,borderWidth:2,pointRadius:3,pointBackgroundColor:'#00d4ff',tension:.4,fill:true,yAxisID:'y1'},
-  ]},options:{responsive:true,interaction:{mode:'index',intersect:false},
-    plugins:{legend:{position:'top',labels:{boxWidth:8,pointStyle:'circle',usePointStyle:true}}},
-    scales:{x:{grid:{color:palette.gridLineColor},border:{color:palette.strongGridLineColor}},
-      y:{position:'left',grid:{color:palette.gridLineColor},title:{display:true,text:'Engagement %'},ticks:{callback:v=>v+'%'}},
-      y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Videos'},ticks:{callback:v=>fmtNum(v)}}}}});
-  const rc=document.getElementById('radarChart').getContext('2d');
-  charts.radar=new Chart(rc,{type:'radar',data:{labels:['Engagement','Consistency','SEO','Thumbnails','Retention','Growth'],
-    datasets:[{data:d.radarScores,borderColor:'#ff2d2d',backgroundColor:'rgba(255,45,45,0.12)',borderWidth:2,pointBackgroundColor:'#ff2d2d',pointRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{r:{angleLines:{color:palette.strongGridLineColor},grid:{color:palette.strongGridLineColor},
-        pointLabels:{font:{size:10},color:palette.secondaryTextColor},ticks:{display:false},min:0,max:100,backgroundColor:palette.gridLineColor}}}});
-  const dc=document.getElementById('donutChart').getContext('2d');
-  charts.donut=new Chart(dc,{type:'doughnut',data:{labels:Object.keys(d.contentMix),datasets:[{
-    data:Object.values(d.contentMix),backgroundColor:['#ff2d2d','#00d4ff','#00e5a0','#f5c842','#7c2cf0'],borderColor:palette.panelBackgroundColor,borderWidth:3,hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
-      plugins:{legend:{position:'bottom',labels:{boxWidth:8,padding:12,pointStyle:'circle',usePointStyle:true,font:{size:11}}}}}});
-}
-function exportPowerBIData(){
-  if(!channelContext){alert('Analyze a channel first.');return}
-  const d=channelContext;
-  const rows=(d.labels||[]).map(function(lbl,i){
-    return [lbl,d.engagementData?.[i]??0,d.videosData?.[i]??0,d.viewsData?.[i]??0,d.likesData?.[i]??0].join(',');
-  });
-  const csv=['month,engagement_rate_percent,videos_uploaded,views,likes'].concat(rows).join('\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=(d.name||'channel').replace(/[^\w-]+/g,'_')+'_powerbi_metrics.csv';
-  announceStatus('Downloading '+a.download+' for Power BI.');
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-}
-
-/* ════════════════════════════════
-   VIDEO RECOMMENDATION GENERATOR
-   (owner's channel only)
-   ════════════════════════════════ */
-async function callGeminiAPI(payload){
-  const models=['gemini-2.0-flash','gemini-1.5-flash'];
-  let lastErr='Unknown error';
-  for(const m of models){
-    try{
-      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+getGemKey(),{
-        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+  function detectNiche(posts){
+    const bucket={};
+    Object.keys(NICHE_KEYWORDS).forEach(k=>bucket[k]=0);
+    posts.forEach(p=>{
+      const text=(p.message||'').toLowerCase();
+      Object.entries(NICHE_KEYWORDS).forEach(([n,words])=>{
+        if(words.some(w=>text.includes(w)))bucket[n]++;
       });
-      const j=await res.json();
-      if(!res.ok){
-        lastErr=(j&&j.error&&j.error.message)?j.error.message:('HTTP '+res.status);
-        continue;
-      }
-      const text=j?.candidates?.[0]?.content?.parts?.[0]?.text||'';
-      if(text)return text;
-      lastErr='No text generated by model';
-    }catch(e){lastErr=(e&&e.message)?e.message:String(e);}
+    });
+    const sorted=Object.entries(bucket).sort((a,b)=>b[1]-a[1]);
+    const top=sorted[0];
+    if(!top||top[1]===0)return{niche:'Community',confidence:55};
+    const conf=clamp(Math.round((top[1]/Math.max(posts.length,1))*100),55,97);
+    return{niche:top[0],confidence:conf};
   }
-  throw new Error(lastErr);
-}
-function extractJSONArray(text){
-  const s=text.replace(/```json|```/g,'').trim();
-  try{
-    const parsed=JSON.parse(s);
-    if(Array.isArray(parsed))return parsed;
-  }catch{}
-  let start=-1,depth=0,inStr=false,isEscaped=false;
-  for(let i=0;i<s.length;i++){
-    const currentChar=s[i];
-    if(inStr){
-      if(isEscaped){isEscaped=false;continue}
-      if(currentChar==='\\'){isEscaped=true;continue}
-      if(currentChar==='"')inStr=false;
-      continue;
+
+  function buildMonthlyData(posts){
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const now=new Date();
+    const bk={};
+    for(let i=11;i>=0;i--){
+      const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+      bk[d.getFullYear()+'-'+d.getMonth()]={posts:0,reactions:0,comments:0,shares:0,score:0};
     }
-    if(currentChar==='"'){inStr=true;continue}
-    if(currentChar==='['){if(start===-1)start=i;depth++;continue}
-    if(currentChar===']'&&start!==-1){depth--;if(depth===0){return JSON.parse(s.slice(start,i+1));}}
+    posts.forEach(p=>{
+      const d=new Date(p.createdAt);
+      const k=d.getFullYear()+'-'+d.getMonth();
+      if(!bk[k])return;
+      bk[k].posts++;
+      bk[k].reactions+=p.reactions;
+      bk[k].comments+=p.comments;
+      bk[k].shares+=p.shares;
+      bk[k].score+=p.score;
+    });
+    const keys=Object.keys(bk);
+    return {
+      labels:keys.map(k=>months[Number(k.split('-')[1])]),
+      postCounts:keys.map(k=>bk[k].posts),
+      monthlyScores:keys.map(k=>bk[k].score),
+      engagementRate:keys.map(k=>bk[k].posts?Number((bk[k].score/bk[k].posts).toFixed(2)):0)
+    };
   }
-  throw new Error('AI response was not valid JSON.');
-}
-async function generateRecommendations(){
-  const topic   = document.getElementById('wizTopicInput').value.trim();
-  const format  = document.getElementById('wizFormat').value;
-  const audience= document.getElementById('wizAudience').value;
-  const keywords= document.getElementById('wizKeywords').value.trim();
-  if(!topic){document.getElementById('wizTopicInput').focus();alert('Please describe your content idea first!');return}
-  if(!channelContext){return}
 
-  const btn=document.getElementById('generateBtn');
-  btn.disabled=true;btn.textContent='GENERATING…';
-  document.getElementById('recResults').innerHTML='<div style="text-align:center;padding:32px;font-family:DM Mono,monospace;font-size:13px;color:var(--text2)"><div class="loader-ring" style="margin:0 auto 16px"></div>AI is analyzing your channel patterns…</div>';
-
-  // Channel context for prompt
-  const topPerformers=(channelContext.recentVideos||[]).slice(0,3).map(v=>`"${v.title}" (${fmtNum(v.views)} views, ${((v.likes/(v.views||1))*100).toFixed(2)}% eng)`).join('\n- ');
-  const topInsight=channelContext.contentInsights?.[0];
-  const channelSummary=`Channel: ${channelContext.name}
-Niche: ${channelContext.niche} (${channelContext.confidence}% confidence)
-Subscribers: ${fmtNum(channelContext.subs)} | Total Views: ${fmtNum(channelContext.views)}
-Avg Engagement Rate: ${channelContext.engRate}%
-Upload Frequency: ${channelContext.uploadFreq}
-Top Performing Pattern Insight: ${topInsight?topInsight.summary:'No strong pattern detected yet.'}
-Best Recent Videos:
-- ${topPerformers}`;
-
-  const prompt=`You are an expert YouTube SEO strategist and content advisor. 
-
-CHANNEL DATA:
-${channelSummary}
-
-USER'S PLANNED CONTENT:
-Topic/Idea: ${topic}
-Format: ${format}
-Target Audience: ${audience}
-Keywords to rank for: ${keywords||'not specified'}
-
-Generate exactly 3 video package options for this content idea. Each option must target different angles.
-
-Respond ONLY in valid JSON, no markdown, no explanation. Format:
-[
-  {
-    "option": 1,
-    "title": "Full YouTube title (60-70 chars, SEO optimized)",
-    "description": "First 3 lines of YouTube description (the part shown before 'Show more', ~150 chars). Include main keyword naturally.",
-    "fullDescription": "Complete YouTube description (300-400 words). Include hook, what viewers will learn, timestamps placeholder, call to action, relevant links placeholder, hashtags at end.",
-    "tags": ["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10"],
-    "thumbnailText": "Short punchy text for thumbnail (max 5 words, ALL CAPS)",
-    "uploadDay": "Best day to upload (Mon/Tue/Wed/Thu/Fri/Sat/Sun)",
-    "uploadTime": "Best time in IST",
-    "estimatedViews": "Realistic range e.g. 10K-50K",
-    "whyItWorks": "1-sentence explanation based on channel patterns"
+  function calcPostingFrequency(posts){
+    if(posts.length<2)return 'Low activity';
+    const dates=posts.map(p=>new Date(p.createdAt)).sort((a,b)=>b-a);
+    let total=0,count=0;
+    for(let i=0;i<Math.min(dates.length-1,20);i++){total+=(dates[i]-dates[i+1])/86400000;count++;}
+    const avg=total/Math.max(count,1);
+    if(avg<=1.5)return 'Daily';
+    if(avg<=4)return Math.round(7/avg)+'/week';
+    if(avg<=12)return Math.round(30/avg)+'/month';
+    return 'Every '+Math.round(avg)+' days';
   }
-]`;
 
-  try{
-    const raw=await callGeminiAPI({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:2000}});
-    const recs=extractJSONArray(raw);
-    renderRecCards(recs);
-  }catch(e){
-    // Fallback: generate locally based on channel data
-    renderRecCards(buildFallbackRecs(topic,format,audience,keywords));
+  function buildContentMix(posts){
+    const counts={};
+    posts.forEach(p=>counts[p.type]=(counts[p.type]||0)+1);
+    const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    if(!top.length)return {'STATUS':100};
+    const total=top.reduce((s,x)=>s+x[1],0);
+    const out={};
+    top.forEach(([k,v])=>out[k]=Math.round((v/total)*100));
+    return out;
   }
-  btn.disabled=false;btn.textContent='GENERATE FULL VIDEO PACKAGE →';
-}
 
-function buildFallbackRecs(topic,format,audience,kw){
-  const ch=channelContext;const n=ch?.niche||'Content';
-  const kwList=kw?kw.split(',').map(k=>k.trim()).filter(Boolean):[];
-  const kwStr=kwList.length?kwList[0]:n.toLowerCase();
-  return[
-    {option:1,title:`I ${topic.slice(0,40)} (${format==='challenge'?'CHALLENGE':'Full Guide'})`,
-     description:`Everything you need to know about ${kwStr}. In this video, I'll take you step by step through the entire process.`,
-     fullDescription:`In this video, I cover everything about ${topic}.\n\n📌 What you'll learn:\n- Step 1\n- Step 2\n- Step 3\n\n⏱ Timestamps:\n0:00 - Intro\n2:00 - Main content\n\n🔔 Subscribe for more ${n} content!\n\n#${kwStr.replace(/\s/g,'')} #${n.replace(/\s/g,'')} #YouTube2025`,
-     tags:[kwStr,n,format,'tutorial','2025','beginners','guide','howto','tips','viral'],
-     thumbnailText:`${kwStr.toUpperCase()} GUIDE`,uploadDay:'Tuesday',uploadTime:'6:00 PM IST',
-     estimatedViews:'5K-25K',whyItWorks:`Matches your channel's best-performing ${format} pattern`},
-    {option:2,title:`Why ${topic.slice(0,35)} Changed Everything For Me`,
-     description:`My honest experience with ${kwStr}. This video might change how you think about it.`,
-     fullDescription:`Story time — here's what happened when I ${topic}.\n\nThis experience taught me a lot, and I'm sharing every detail.\n\n🔔 Subscribe for weekly ${n} videos!\n\n#${kwStr.replace(/\s/g,'')} #storytelling #authentic`,
-     tags:[kwStr,'story','personal','experience','2025',n,'authentic','honest','journey','growth'],
-     thumbnailText:'THE TRUTH ABOUT '+kwStr.toUpperCase().slice(0,8),uploadDay:'Thursday',uploadTime:'7:00 PM IST',
-     estimatedViews:'8K-40K',whyItWorks:'Personal story format drives 2x higher watch time on your channel'},
-    {option:3,title:`${topic.slice(0,30)} in 2025 — Honest Review`,
-     description:`Is ${kwStr} worth it in 2025? I tested it so you don't have to. Full breakdown inside.`,
-     fullDescription:`Complete review of ${topic} in 2025.\n\n✅ Pros:\n- \n\n❌ Cons:\n- \n\nFinal verdict: \n\n🔔 Subscribe for more honest reviews!\n\n#${kwStr.replace(/\s/g,'')} #review #honest #2025`,
-     tags:[kwStr,'review','2025','honest','comparison','worth it',n,'tested','results','breakdown'],
-     thumbnailText:'WORTH IT IN 2025?',uploadDay:'Saturday',uploadTime:'11:00 AM IST',
-     estimatedViews:'3K-15K',whyItWorks:'Review format has highest click-through rate in your niche'},
-  ];
-}
+  function buildInsights(posts,followers){
+    if(!posts.length)return['No recent posts were returned by Graph API.'];
+    const avgER=(posts.reduce((s,p)=>s+p.engagementRate,0)/posts.length).toFixed(3);
+    const byType={};
+    posts.forEach(p=>{if(!byType[p.type])byType[p.type]=[];byType[p.type].push(p.engagementRate);});
+    const typeRank=Object.entries(byType).map(([k,v])=>[k,v.reduce((a,b)=>a+b,0)/v.length]).sort((a,b)=>b[1]-a[1]);
+    const bestType=typeRank[0]?.[0]||'STATUS';
+    const capLen=Math.round(posts.reduce((s,p)=>s+p.messageLength,0)/posts.length);
 
-function renderRecCards(recs){
-  if(!recs||!recs.length){document.getElementById('recResults').innerHTML='<p style="color:var(--muted);font-family:DM Mono,monospace;font-size:13px">Could not generate recommendations. Please try again.</p>';return}
-  document.getElementById('recResults').innerHTML=recs.map((r,i)=>`
-    <div class="rec-card" style="animation-delay:${i*0.1}s">
-      <div class="rec-card-head">
-        <div class="rec-card-num">0${r.option||i+1}</div>
-        <div class="rec-card-title">${esc(r.title)}</div>
+    const days={Sun:0,Mon:0,Tue:0,Wed:0,Thu:0,Fri:0,Sat:0};
+    const idx=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    posts.forEach(p=>{days[idx[new Date(p.createdAt).getDay()]]+=p.score;});
+    const bestDay=Object.entries(days).sort((a,b)=>b[1]-a[1])[0][0];
+
+    const highShare=posts.filter(p=>p.shares>=10).length;
+    return [
+      `Average engagement rate per post is <strong>${avgER}%</strong> (followers baseline: ${fmtNum(followers)}).`,
+      `<strong>${bestType}</strong> posts currently drive the highest engagement on this page.`,
+      `Top-performing day is <strong>${bestDay}</strong> based on weighted interactions.`,
+      `Average caption length is <strong>${capLen}</strong> characters — keep hooks in first 120 chars.`,
+      `${highShare} of ${posts.length} recent posts crossed <strong>10+ shares</strong>.`
+    ];
+  }
+
+  async function buildPageData(pageId){
+    const [page,rawPosts]=await Promise.all([fetchPageInfo(pageId),fetchPagePosts(pageId,50)]);
+    const followers=Number(page.followers_count||page.fan_count||0);
+    const posts=toPostMetrics(rawPosts,followers);
+    const niche=detectNiche(posts);
+    const monthly=buildMonthlyData(posts);
+    const avgEng=posts.length?Number((posts.reduce((s,p)=>s+p.engagementRate,0)/posts.length).toFixed(3)):0;
+    return {
+      pageId:page.id,
+      name:page.name||'Unknown Page',
+      username:page.username||'',
+      category:page.category||'Facebook Page',
+      about:page.about||'',
+      verified:String(page.verification_status||'').toLowerCase()==='blue_verified'||String(page.verification_status||'').toLowerCase().includes('verified'),
+      picture:page?.picture?.data?.url||'',
+      followers,
+      fans:Number(page.fan_count||0),
+      posts,
+      postCount:posts.length,
+      avgEngagement:avgEng,
+      postingFrequency:calcPostingFrequency(posts),
+      niche:niche.niche,
+      confidence:niche.confidence,
+      contentMix:buildContentMix(posts),
+      insights:buildInsights(posts,followers),
+      ...monthly
+    };
+  }
+
+  function showLoading(msg){
+    document.getElementById('loadingText').textContent=msg||'Analyzing Facebook page…';
+    document.getElementById('hero').style.display='none';
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('loading').style.display='flex';
+  }
+
+  function hideLoading(){document.getElementById('loading').style.display='none';}
+
+  function demoLoad(v){document.getElementById('pageInput').value=v;}
+
+  async function startAnalysis(){
+    const input=document.getElementById('pageInput').value.trim();
+    if(!input){document.getElementById('pageInput').focus();return;}
+    showLoading('Fetching Facebook page and post data…');
+    try{
+      const pageId=await resolvePageId(input);
+      const data=await buildPageData(pageId);
+      pageContext=data;
+      renderDashboard(data);
+      hideLoading();
+    }catch(e){
+      hideLoading();
+      document.getElementById('hero').style.display='flex';
+      alert('⚠️ '+e.message);
+    }
+  }
+
+  function renderDashboard(data){
+    document.getElementById('dashboard').style.display='block';
+    window.scrollTo(0,0);
+
+    const av=document.getElementById('avatarEl');
+    if(data.picture){av.innerHTML='<img src="'+data.picture+'" alt="'+esc(data.name)+'">';}
+    else{av.textContent=(data.name||'F').charAt(0).toUpperCase();}
+
+    document.getElementById('pageName').textContent=data.name.toUpperCase();
+    document.getElementById('pageSub').textContent=(data.username?('@'+data.username+' · '):'')+data.category+' · '+fmtNum(data.followers)+' followers';
+    document.getElementById('verifiedPill').style.display=data.verified?'inline-flex':'none';
+
+    const kpis=[
+      {label:'FOLLOWERS',value:fmtNum(data.followers),sub:'Current followers'},
+      {label:'PAGE LIKES',value:fmtNum(data.fans),sub:'Fan count (likes)'},
+      {label:'AVG ENGAGEMENT',value:data.avgEngagement+'%',sub:'Weighted interactions / followers'},
+      {label:'POSTING FREQUENCY',value:data.postingFrequency,sub:'Based on recent posts'},
+      {label:'NICHE SIGNAL',value:data.niche.toUpperCase(),sub:data.confidence+'% confidence'},
+      {label:'POSTS ANALYZED',value:String(data.postCount),sub:'Recent Graph API posts'}
+    ];
+
+    document.getElementById('kpiGrid').innerHTML=kpis.map(k=>`<div class="k"><small>${k.label}</small><b>${k.value}</b><span>${k.sub}</span></div>`).join('');
+    document.getElementById('insightList').innerHTML=(data.insights||[]).map(x=>`<div class="ins">${x}</div>`).join('');
+
+    document.getElementById('postBody').innerHTML=(data.posts||[]).slice(0,10).map(p=>`
+      <tr>
+        <td class="post-title"><a href="${esc(p.permalink)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(p.title||'Untitled post')}</a></td>
+        <td>${esc(p.type)}</td>
+        <td>${fmtNum(p.reactions)}</td>
+        <td>${fmtNum(p.comments)}</td>
+        <td>${fmtNum(p.shares)}</td>
+        <td style="color:var(--cyan)">${p.engagementRate.toFixed(3)}%</td>
+      </tr>
+    `).join('');
+
+    Object.values(charts).forEach(c=>c.destroy());
+    charts={};
+    renderCharts(data);
+    document.getElementById('ideaResults').innerHTML='';
+  }
+
+  function renderCharts(d){
+    const line=document.getElementById('lineChart').getContext('2d');
+    charts.line=new Chart(line,{type:'line',data:{labels:d.labels,datasets:[
+      {label:'Engagement score / post',data:d.engagementRate,borderColor:'#1877f2',backgroundColor:'rgba(24,119,242,.15)',fill:true,tension:.35,borderWidth:2,pointRadius:3,yAxisID:'y'},
+      {label:'Posts',data:d.postCounts,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.12)',fill:true,tension:.35,borderWidth:2,pointRadius:3,yAxisID:'y1'}
+    ]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{
+      y:{position:'left',ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,.06)'}},
+      y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#94a3b8'}},
+      x:{ticks:{color:'#94a3b8'},grid:{color:'rgba(255,255,255,.04)'}}
+    },plugins:{legend:{labels:{color:'#94a3b8'}}}}});
+
+    const mix=document.getElementById('mixChart').getContext('2d');
+    charts.mix=new Chart(mix,{type:'doughnut',data:{labels:Object.keys(d.contentMix),datasets:[{data:Object.values(d.contentMix),backgroundColor:['#1877f2','#00d4ff','#00e5a0','#f5c842','#7c3aed'],borderColor:'#0d1427',borderWidth:2}]},options:{plugins:{legend:{position:'bottom',labels:{color:'#94a3b8'}}},cutout:'65%'}});
+  }
+
+  function goBack(){
+    Object.values(charts).forEach(c=>c.destroy());
+    charts={};
+    pageContext=null;
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('hero').style.display='flex';
+  }
+
+  async function callGemini(prompt){
+    const gemKey=getGemKey();
+    if(!gemKey)throw new Error('Gemini key missing');
+    const payload={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1400}};
+    const models=['gemini-2.0-flash','gemini-1.5-flash'];
+    let err='Unknown error';
+    for(const m of models){
+      try{
+        const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+gemKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        const j=await res.json();
+        if(!res.ok){err=j?.error?.message||('HTTP '+res.status);continue;}
+        const txt=j?.candidates?.[0]?.content?.parts?.[0]?.text||'';
+        if(txt)return txt;
+      }catch(e){err=e.message||String(e)}
+    }
+    throw new Error(err);
+  }
+
+  function extractJSON(text){
+    const clean=String(text||'').replace(/```json|```/g,'').trim();
+    try{const j=JSON.parse(clean);if(Array.isArray(j))return j;}catch{}
+    const s=clean.indexOf('['),e=clean.lastIndexOf(']');
+    if(s!==-1&&e!==-1&&e>s)return JSON.parse(clean.slice(s,e+1));
+    throw new Error('AI response was not valid JSON.');
+  }
+
+  function fallbackIdeas(topic,data){
+    const niche=(data?.niche||'Community').toLowerCase();
+    return [
+      {title:`${topic}: quick behind-the-scenes update`,caption:`Here is a quick behind-the-scenes look at ${topic}. What part should we cover next?`,hook:'Ask one direct question in first line.'},
+      {title:`Top 5 takeaways about ${topic}`,caption:`Top 5 things our community should know about ${topic} this week. Save this post for later.`,hook:'Use numbered format with bold first sentence.'},
+      {title:`Community poll: your opinion on ${topic}`,caption:`We are planning our next ${niche} update around ${topic}. Drop your vote in comments.`,hook:'Use poll CTA and pin best comment.'}
+    ];
+  }
+
+  async function generateIdeas(){
+    if(!pageContext){alert('Analyze a Facebook page first.');return;}
+    const topic=document.getElementById('ideaInput').value.trim();
+    if(!topic){document.getElementById('ideaInput').focus();return;}
+
+    const btn=document.getElementById('ideaBtn');
+    btn.disabled=true;btn.textContent='GENERATING…';
+    const out=document.getElementById('ideaResults');
+    out.innerHTML='<div class="ins">Generating Facebook-ready post ideas…</div>';
+
+    const prompt=`You are a Facebook growth strategist. Return exactly 3 objects in a JSON array.
+Context:
+- Page: ${pageContext.name}
+- Niche: ${pageContext.niche}
+- Followers: ${fmtNum(pageContext.followers)}
+- Avg Engagement: ${pageContext.avgEngagement}%
+- Topic: ${topic}
+Format for each object:
+{"title":"short concept","caption":"facebook caption under 90 words","hook":"one tactical optimization note"}`;
+
+    try{
+      const raw=await callGemini(prompt);
+      const ideas=extractJSON(raw);
+      renderIdeas(ideas);
+    }catch(e){
+      renderIdeas(fallbackIdeas(topic,pageContext));
+    }
+
+    btn.disabled=false;btn.textContent='GENERATE';
+  }
+
+  function renderIdeas(ideas){
+    const out=document.getElementById('ideaResults');
+    out.innerHTML=(ideas||[]).slice(0,3).map(i=>`
+      <div class="idea">
+        <b>${esc(i.title||'Untitled idea')}</b>
+        <p>${esc(i.caption||'')}</p>
+        <p style="margin-top:8px;color:var(--cyan)">💡 ${esc(i.hook||'')}</p>
       </div>
-      <div class="rec-card-body">
-        <div class="rec-thumbnail-text">${esc(r.thumbnailText||'CLICK THIS')}</div>
-        <div style="margin-top:16px" class="rec-section">
-          <div class="rec-section-label">📝 Description Preview</div>
-          <div class="rec-section-text">${esc(r.description)}</div>
-        </div>
-        <details style="margin-bottom:12px">
-          <summary style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cyan);cursor:pointer;letter-spacing:1px;padding:8px 0;list-style:none">▶ SHOW FULL DESCRIPTION</summary>
-          <div class="rec-section-text" style="margin-top:8px;white-space:pre-line;background:var(--bg3);padding:12px;border-radius:8px;font-size:12px">${esc(r.fullDescription||r.description)}</div>
-        </details>
-        <div class="rec-section">
-          <div class="rec-section-label">🏷 Tags</div>
-          <div class="rec-tags-wrap">${(r.tags||[]).map(t=>`<span class="rec-tag">${esc(t)}</span>`).join('')}</div>
-        </div>
-        <div class="rec-meta-row">
-          <div class="rec-meta-chip">📅 Upload: <strong>${esc(r.uploadDay)} ${esc(r.uploadTime||'')}</strong></div>
-          <div class="rec-meta-chip">👁 Est. Views: <strong>${esc(r.estimatedViews||'—')}</strong></div>
-          <div class="rec-meta-chip">💡 <strong>${esc(r.whyItWorks||'')}</strong></div>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-/* ════════════════════════════════
-   AI CHATBOT
-   ════════════════════════════════ */
-function initChat(data){
-  chatHistory=[];
-  document.getElementById('chatMsgs').innerHTML='';
-  const isOwner=isOwnChannel&&googleUser;
-  addBotMsg(`👋 Hey${isOwner?' '+googleUser.name.split(' ')[0]:''
-  }! I've analyzed **${data.name}** — a **${data.niche}** channel with **${fmtNum(data.subs)} subs**.\n\n${
-    isOwner?'As the channel owner, I can help you with growth strategies, content ideas, SEO, and more.':'I can help you analyze this channel\'s patterns and compare it with your own.'
-  }\n\nWhat would you like to know?`);
-  const q=isOwner?[
-    'Why is my engagement rate '+data.engRate+'%?',
-    'How do I grow faster in '+data.niche+'?',
-    'What title format gets me most views?',
-    'What should I post next week?',
-  ]:[
-    'What is this channel doing well?',
-    'What niche gaps can I exploit?',
-    'How does this compare to top creators?',
-    'What can I learn from their strategy?',
-  ];
-  document.getElementById('chatSuggestions').innerHTML=q.map(x=>`<div class="chat-chip" onclick="quickChat('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');
-}
-
-function toggleChat(){
-  const p=document.getElementById('chatPanel');p.classList.toggle('open');
-  if(p.classList.contains('open'))document.getElementById('chatInput').focus();
-}
-function quickChat(q){document.getElementById('chatInput').value=q;sendChat()}
-
-function addBotMsg(text){
-  const m=document.getElementById('chatMsgs');
-  const d=document.createElement('div');d.className='msg bot';
-  d.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function addUserMsg(text){
-  const m=document.getElementById('chatMsgs');
-  const d=document.createElement('div');d.className='msg user';
-  d.innerHTML=`<div class="msg-bubble">${esc(text)}</div><div class="msg-avatar">👤</div>`;
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function showTyping(show){
-  const m=document.getElementById('chatMsgs');let t=document.getElementById('typingDot');
-  if(show&&!t){t=document.createElement('div');t.id='typingDot';t.className='msg bot';
-    t.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble"><div class="chat-typing show"><span></span><span></span><span></span></div></div>`;
-    m.appendChild(t);m.scrollTop=m.scrollHeight;
-  }else if(!show&&t)t.remove();
-}
-
-
-function buildChatContext(d){
-  var isOwner = isOwnChannel && googleUser;
-  var videos  = d.rawVideos || [];
-  var topVids = (d.recentVideos || []).slice(0,5).map(function(v){
-    var er = v.views > 0 ? ((v.likes/v.views)*100).toFixed(2) : '0';
-    return '"' + v.title + '" - ' + fmtNum(v.views) + ' views, ' + er + '% eng';
-  }).join(' | ');
-  var insightStr = (d.contentInsights || []).slice(0,3).map(function(r){
-    return r.title + ': ' + r.summary + ' [' + (r.impact||'') + ']';
-  }).join('; ');
-  var radarLbls = ['Engagement','Consistency','SEO','Thumbnails','Retention','Growth'];
-  var radarStr = (d.radarScores || []).map(function(s,i){ return radarLbls[i]+':'+s+'/100'; }).join(', ');
-  var mixStr = Object.entries(d.contentMix || {}).map(function(e){ return e[0]+'('+e[1]+'%)'; }).join(', ');
-  var avgTags = 0, avgDesc = 0, noTags = 0, noDesc = 0;
-  if(videos.length){
-    avgTags = Math.round(videos.reduce(function(s,v){ return s+((v.snippet&&v.snippet.tags&&v.snippet.tags.length)||0); },0)/videos.length);
-    avgDesc = Math.round(videos.reduce(function(s,v){ return s+((v.snippet&&v.snippet.description&&v.snippet.description.length)||0); },0)/videos.length);
-    noTags  = videos.filter(function(v){ return !v.snippet||!v.snippet.tags||v.snippet.tags.length<5; }).length;
-    noDesc  = videos.filter(function(v){ return !v.snippet||!v.snippet.description||v.snippet.description.length<100; }).length;
+    `).join('');
   }
-  return 'You are TubeIQ AI, expert YouTube channel analyst. Use ONLY this real data — no generic advice.\n'
-    + 'CHANNEL: ' + d.name + ' | NICHE: ' + d.niche + ' (' + d.confidence + '% conf from real categories)\n'
-    + 'SUBS: ' + fmtNum(d.subs) + ' | VIEWS: ' + fmtNum(d.views) + ' | VIDEOS: ' + fmtNum(d.videoCount) + ' | FREQ: ' + d.uploadFreq + '\n'
-    + 'ENGAGEMENT: ' + d.engRate + '% ' + (parseFloat(d.engRate)>=3?'(above 3% benchmark)':'(BELOW 3% - needs work)') + '\n'
-    + 'RECENT VIDEOS: ' + topVids + '\n'
-    + 'CONTENT INSIGHTS: ' + insightStr + '\n'
-    + 'RADAR SCORES: ' + radarStr + '\n'
-    + 'CONTENT MIX: ' + mixStr + '\n'
-    + 'SEO: avg ' + avgTags + ' tags/video ' + (avgTags<10?'(LOW)':'(ok)') + ', avg ' + avgDesc + ' chars desc ' + (avgDesc<300?'(SHORT)':'(ok)') + ', ' + noTags + ' videos missing tags, ' + noDesc + ' with thin desc\n'
-    + (isOwner ? 'USER IS CHANNEL OWNER. Use "you/your", be direct and actionable.' : 'Competitor analysis. Help user understand what to learn.') + '\n'
-    + 'RULES: 3-5 sentences max. Bold **key numbers**. Reference real data above.';
-}
-async function sendChat(){
-  const inp=document.getElementById('chatInput');const txt=inp.value.trim();if(!txt)return;
-  inp.value='';inp.style.height='auto';
-  document.getElementById('chatSendBtn').disabled=true;
-  addUserMsg(txt);chatHistory.push({role:'user',content:txt});
-  const d=channelContext;
-  const sys = d ? buildChatContext(d) : 'You are TubeIQ AI, a YouTube growth expert. Give brief, data-driven, actionable advice.';
-  showTyping(true);
-  try{
-    // Build Gemini conversation history
-    var gemHist=chatHistory.slice(0,-1).map(function(h){return{role:h.role==='assistant'?'model':'user',parts:[{text:h.content}]};});
-    const reply=await callGeminiAPI({system_instruction:{parts:[{text:sys}]},contents:gemHist.concat([{role:'user',parts:[{text:txt}]}]),generationConfig:{maxOutputTokens:400}});
-    chatHistory.push({role:'assistant',content:reply});showTyping(false);addBotMsg(reply);
-  }catch(e){
-    showTyping(false);
-    var emsg=(e&&e.message)?e.message:String(e);
-    addBotMsg('⚠️ Could not reach Gemini AI. Error: '+emsg+'. Please try again.');
-  }
-  document.getElementById('chatSendBtn').disabled=false;
-}
-
-
-/* ════════════════════════════════════════════════════════
-   GOOGLE OAUTH — 2-STEP FLOW (mine=true)
-   ════════════════════════════════════════════════════════ */
-
-function lsShow(n){[1,2,3,4].forEach(function(i){document.getElementById('ls'+i).style.display=i===n?'block':'none';})}
-
-function openLoginModal(){
-  document.getElementById('loginModal').classList.add('open');
-  lsShow(1);
-  renderGoogleSignInButton(false);
-}
-function closeLoginModal(){document.getElementById('loginModal').classList.remove('open')}
-function renderGoogleSignInButton(shouldReRender){
-  var btnEl=document.getElementById('googleSignInBtn');
-  if(!btnEl||!window.google)return;
-  if(shouldReRender)btnEl.textContent='';
-  if(btnEl.hasChildNodes())return;
-  var buttonTheme=getEffectiveTheme()==='light'?'outline':'filled_black';
-  google.accounts.id.initialize({client_id:G_CLIENT,callback:handleGoogleIdToken,auto_select:false,cancel_on_tap_outside:false});
-  google.accounts.id.renderButton(btnEl,{theme:buttonTheme,size:'large',width:400,text:'signin_with',shape:'rectangular'});
-}
-
-function handleGoogleIdToken(resp){
-  var pl=JSON.parse(atob(resp.credential.split('.')[1]));
-  googleUser={name:pl.name,email:pl.email,picture:pl.picture};
-  document.getElementById('navLoginBtn').style.display='none';
-  document.getElementById('navUserImg').src=pl.picture;
-  document.getElementById('navUserName').textContent=pl.name.split(' ')[0];
-  document.getElementById('navUserPill').classList.add('active');
-  lsShow(2);
-  document.getElementById('lsMsg').textContent='Requesting YouTube access…';
-  requestYTToken();
-}
-
-function requestYTToken(){
-  if(!window.google||!window.google.accounts||!window.google.accounts.oauth2){setTimeout(requestYTToken,600);return}
-  var tc=google.accounts.oauth2.initTokenClient({
-    client_id:G_CLIENT,
-    scope:'https://www.googleapis.com/auth/youtube.readonly',
-    callback:handleYTToken,
-    error_callback:function(e){
-      logoutGoogle();closeLoginModal();
-      alert('YouTube access was denied. TubeIQ needs YouTube access to detect your channel.');
-    }
-  });
-  tc.requestAccessToken({prompt:''});
-}
-
-async function handleYTToken(tr){
-  if(tr.error){logoutGoogle();closeLoginModal();alert('Could not get YouTube access: '+tr.error);return}
-  googleAccessToken=tr.access_token;
-  document.getElementById('lsMsg').textContent='Fetching your YouTube channel…';
-  try{
-    var res=await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&mine=true',{headers:{'Authorization':'Bearer '+googleAccessToken}});
-    var data=await res.json();
-    var items=data.items||[];
-    if(items.length===0){
-      lsShow(4);
-    } else if(items.length===1){
-      ownerChannelId=items[0].id;ownerChannels=items;
-      closeLoginModal();
-      document.getElementById('channelInput').value=items[0].id;
-      startAnalysis();
-    } else {
-      ownerChannels=items;lsShow(3);renderChPicker(items);
-    }
-  }catch(e){lsShow(4);}
-}
-
-function renderChPicker(items){
-  document.getElementById('chPickerList').innerHTML=items.map(function(ch){
-    var thumb=ch.snippet&&ch.snippet.thumbnails&&(ch.snippet.thumbnails.medium||ch.snippet.thumbnails.default);
-    var src=thumb?thumb.url:'';
-    var subs=ch.statistics&&ch.statistics.subscriberCount?fmtNum(ch.statistics.subscriberCount)+' subs':'—';
-    var av=src?('<img class="ch-picker-avatar" src="'+src+'">')
-              :('<div class="ch-picker-avatar-fb">'+ch.snippet.title.charAt(0)+'</div>');
-    return '<div class="ch-picker-item" onclick="pickOwnerChannel(\''+ch.id+'\')">'
-      +av+'<div class="ch-picker-info"><h4>'+esc(ch.snippet.title)+'</h4><p>'+subs+' · '+(ch.snippet.customUrl||ch.id)+'</p></div>'
-      +'<div class="ch-picker-arrow">→</div></div>';
-  }).join('');
-}
-function pickOwnerChannel(id){ownerChannelId=id;closeLoginModal();document.getElementById('channelInput').value=id;startAnalysis();}
-
-function logoutGoogle(){
-  googleUser=null;googleAccessToken=null;ownerChannelId=null;ownerChannels=[];isOwnChannel=false;
-  document.getElementById('navLoginBtn').style.display='flex';
-  document.getElementById('navUserPill').classList.remove('active');
-  var vb=document.getElementById('verifiedBadge');if(vb)vb.className='verified-badge';
-  var rp=document.getElementById('recPanel');if(rp)rp.classList.remove('show');
-  var hp=document.getElementById('healthPanel');if(hp)hp.classList.remove('show');
-  var cb=document.getElementById('compareBtn');if(cb)cb.style.display='none';
-  if(window.google)google.accounts.id.disableAutoSelect();
-}
-
-window.addEventListener('load',function(){
-  initThemeMode();
-  if(window.google&&G_CLIENT)google.accounts.id.initialize({client_id:G_CLIENT,callback:handleGoogleIdToken});
-});
-
-/* ════════════════════════════════
-   CHANNEL HEALTH AUDIT
-   ════════════════════════════════ */
-function runHealthAudit(data){
-  var issues=[];var videos=data.rawVideos||[];
-  var er=parseFloat(data.engRate||0);
-  var avgTags=videos.length?videos.reduce(function(s,v){return s+((v.snippet&&v.snippet.tags&&v.snippet.tags.length)||0);},0)/videos.length:0;
-  var avgDescLen=videos.length?videos.reduce(function(s,v){return s+((v.snippet&&v.snippet.description&&v.snippet.description.length)||0);},0)/videos.length:0;
-  var noTags=videos.filter(function(v){return !v.snippet||!v.snippet.tags||v.snippet.tags.length<5;}).length;
-  var noDesc=videos.filter(function(v){return !v.snippet||!v.snippet.description||v.snippet.description.length<100;}).length;
-  var dates=videos.map(function(v){return new Date(v.snippet&&v.snippet.publishedAt);}).filter(Boolean).sort(function(a,b){return b-a;});
-  var gaps=[];for(var i=0;i<Math.min(dates.length-1,10);i++)gaps.push((dates[i]-dates[i+1])/86400000);
-  var avgGap=gaps.length?gaps.reduce(function(s,g){return s+g;},0)/gaps.length:999;
-  var gapStd=gaps.length?Math.sqrt(gaps.reduce(function(s,g){return s+Math.pow(g-avgGap,2);},0)/gaps.length):0;
-  var daysSinceLast=dates[0]?Math.floor((Date.now()-dates[0])/86400000):999;
-
-  if(er<1) issues.push({t:'err',icon:'📉',label:'Critical: Low Engagement',msg:er+'% engagement is critically low (benchmark: 3%+).',fix:'Add clear CTAs in every video — ask a question and pin the comment.'});
-  else if(er<3) issues.push({t:'warn',icon:'📊',label:'Below-Average Engagement',msg:er+'% engagement is below the 3% benchmark.',fix:'End videos with a specific question. Reply to every comment in the first hour.'});
-  else issues.push({t:'ok',icon:'✅',label:'Good Engagement',msg:er+'% engagement is above benchmark. Keep it up.'});
-
-  if(daysSinceLast>30) issues.push({t:'err',icon:'📅',label:'No Recent Upload',msg:'Last upload was '+daysSinceLast+' days ago. Algorithm stops promoting inactive channels.',fix:'Post at minimum 1 video per month.'});
-  else if(gapStd>avgGap*0.8) issues.push({t:'warn',icon:'🔄',label:'Inconsistent Schedule',msg:'Upload gaps vary wildly (avg '+Math.round(avgGap)+'d, std '+Math.round(gapStd)+'d).',fix:'Pick a fixed upload day and stick to it for 8 weeks.'});
-  else issues.push({t:'ok',icon:'✅',label:'Consistent Uploads',msg:'Uploading roughly every '+Math.round(avgGap)+' days. Algorithm rewards this.'});
-
-  if(avgTags<5) issues.push({t:'err',icon:'🏷',label:'Missing Tags',msg:noTags+' videos have fewer than 5 tags. Invisible to search.',fix:'Add 10-15 specific tags to every video.'});
-  else if(avgTags<10) issues.push({t:'warn',icon:'🏷',label:'Weak Tag Strategy',msg:'Average '+Math.round(avgTags)+' tags/video. Could rank for more searches.',fix:'Increase to 12-15 tags including broad and long-tail terms.'});
-  else issues.push({t:'ok',icon:'✅',label:'Good Tag Coverage',msg:'Average '+Math.round(avgTags)+' tags/video. Solid SEO.'});
-
-  if(avgDescLen<100) issues.push({t:'err',icon:'📝',label:'Empty Descriptions',msg:noDesc+' videos have near-empty descriptions. Kills SEO and watch time.',fix:'Write at least 300 words per video. Include keywords in the first 2 sentences.'});
-  else if(avgDescLen<300) issues.push({t:'warn',icon:'📝',label:'Short Descriptions',msg:'Average description is only '+Math.round(avgDescLen)+' chars.',fix:'Expand to 300+ words with timestamps, links, and keywords.'});
-  else issues.push({t:'ok',icon:'✅',label:'Good Descriptions',msg:'Average '+Math.round(avgDescLen)+' chars per description.'});
-
-  var svRatio=data.subs>0?(data.views/data.subs).toFixed(1):0;
-  if(svRatio<10) issues.push({t:'warn',icon:'👁',label:'Low View-Per-Sub Ratio',msg:'Only '+svRatio+' lifetime views per subscriber.',fix:'Notify subs via community posts. Strong hook in first 30 seconds.'});
-  else issues.push({t:'ok',icon:'✅',label:'Healthy View-Per-Sub Ratio',msg:svRatio+' lifetime views per subscriber.'});
-
-  var radar=data.radarScores||[];
-  var rLabels=['Engagement','Consistency','SEO','Thumbnails','Retention','Growth'];
-  if(radar.length){var min=Math.min.apply(null,radar);var minIdx=radar.indexOf(min);if(min<40)issues.push({t:'warn',icon:'📡',label:'Radar Weakness: '+rLabels[minIdx],msg:'Your "'+rLabels[minIdx]+'" score is '+min+'/100 — weakest area.',fix:'Focus next 4 weeks specifically on improving '+rLabels[minIdx].toLowerCase()+'.'});}
-
-  document.getElementById('healthPanel').classList.add('show');
-  var errs=issues.filter(function(i){return i.t==='err';}).length;
-  var warns=issues.filter(function(i){return i.t==='warn';}).length;
-  document.getElementById('healthSub').textContent=errs+' CRITICAL · '+warns+' WARNINGS · '+(issues.length-errs-warns)+' PASSING · '+issues.length+' CHECKS TOTAL';
-  document.getElementById('healthGrid').innerHTML=issues.map(function(i){
-    return '<div class="health-item '+i.t+'"><div class="health-icon">'+i.icon+'</div><div>'
-      +'<div class="health-label">'+i.label+'</div>'
-      +'<div class="health-msg">'+i.msg+'</div>'
-      +(i.fix?'<div class="health-fix">→ FIX: '+i.fix+'</div>':'')
-      +'</div></div>';
-  }).join('');
-}
-
-/* ════════════════════════════════
-   COMPARE FEATURE
-   ════════════════════════════════ */
-var cmpCharts={};
-
-function startCompare(){
-  document.getElementById('cmpOverlay').classList.add('open');
-  document.getElementById('cmpInput').value='';
-  document.getElementById('cmpBody').classList.remove('show');
-  document.getElementById('cmpLoading').classList.remove('show');
-  document.getElementById('cmpInput').focus();
-  Object.values(cmpCharts).forEach(function(c){c.destroy();});cmpCharts={};
-}
-function closeCmp(){
-  document.getElementById('cmpOverlay').classList.remove('open');
-  Object.values(cmpCharts).forEach(function(c){c.destroy();});cmpCharts={};
-}
-async function loadCompare(){
-  var input=document.getElementById('cmpInput').value.trim();if(!input)return;
-  var btn=document.getElementById('cmpLoadBtn');btn.disabled=true;
-  document.getElementById('cmpBody').classList.remove('show');
-  document.getElementById('cmpLoading').classList.add('show');
-  try{
-    var cid=await resolveChannelId(input);
-    var cmpData=await buildRealChannelData(cid);
-    document.getElementById('cmpLoading').classList.remove('show');
-    renderCompare(channelContext,cmpData);
-    document.getElementById('cmpBody').classList.add('show');
-  }catch(e){
-    document.getElementById('cmpLoading').classList.remove('show');
-    alert('⚠️ '+e.message);
-  }
-  btn.disabled=false;
-}
-function renderCompare(a,b){
-  function tag(va,vb){var na=parseFloat(String(va).replace(/[^0-9.]/g,''));var nb=parseFloat(String(vb).replace(/[^0-9.]/g,''));if(isNaN(na)||isNaN(nb))return['tie','tie'];if(na>nb)return['win','lose'];if(nb>na)return['lose','win'];return['tie','tie'];}
-  var metrics=[
-    {label:'Subscribers',va:fmtNum(a.subs),vb:fmtNum(b.subs),raw:[a.subs,b.subs]},
-    {label:'Total Views',va:fmtNum(a.views),vb:fmtNum(b.views),raw:[a.views,b.views]},
-    {label:'Avg Engagement',va:a.engRate+'%',vb:b.engRate+'%',raw:[a.engRate,b.engRate]},
-    {label:'Upload Freq',va:a.uploadFreq,vb:b.uploadFreq,raw:[null,null]},
-    {label:'Niche Confidence',va:a.confidence+'%',vb:b.confidence+'%',raw:[a.confidence,b.confidence]},
-    {label:'Video Count',va:fmtNum(a.videoCount),vb:fmtNum(b.videoCount),raw:[a.videoCount,b.videoCount]},
-  ];
-  function chanCol(d,isYou){
-    var av=d.thumbnailUrl?'<img src="'+d.thumbnailUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':'<span style="font-family:Bebas Neue,sans-serif;font-size:20px">'+d.name.charAt(0)+'</span>';
-    return '<div><div class="cmp-ch-head"><div class="cmp-ch-avatar">'+av+'</div>'
-      +'<div><div class="cmp-ch-name">'+esc(d.name)+'</div><div class="cmp-ch-sub">'+d.niche+' · '+(d.handle||d.channelId)+'</div>'
-      +(isYou?'<span class="cmp-you-badge">YOUR CHANNEL</span>':'')+'</div></div>'
-      +'<div class="cmp-stat-grid">'+metrics.map(function(m){
-        var t=m.raw[0]!==null?tag(m.raw[0],m.raw[1]):['tie','tie'];
-        var cls=isYou?t[0]:t[1];var val=isYou?m.va:m.vb;
-        return '<div class="cmp-stat-row"><div class="cmp-stat-label">'+m.label+'</div><div class="cmp-stat-val '+cls+'">'+val+'</div></div>';
-      }).join('')+'</div></div>';
-  }
-  document.getElementById('cmpCols').innerHTML=chanCol(a,true)+chanCol(b,false);
-  document.getElementById('cmpRadarTitle1').textContent=a.name.toUpperCase();
-  document.getElementById('cmpRadarTitle2').textContent=b.name.toUpperCase();
-  Object.values(cmpCharts).forEach(function(c){c.destroy();});cmpCharts={};
-  function radarCfg(scores,color){var palette=getThemePalette();return{type:'radar',data:{labels:['Engagement','Consistency','SEO','Thumbnails','Retention','Growth'],datasets:[{data:scores,borderColor:color,backgroundColor:color.replace('rgb','rgba').replace(')',',0.12)'),borderWidth:2,pointBackgroundColor:color,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{angleLines:{color:palette.strongGridLineColor},grid:{color:palette.strongGridLineColor},pointLabels:{font:{size:9},color:palette.secondaryTextColor},ticks:{display:false},min:0,max:100}}}};}
-  cmpCharts.r1=new Chart(document.getElementById('cmpRadar1'),radarCfg(a.radarScores,'#ff2d2d'));
-  cmpCharts.r2=new Chart(document.getElementById('cmpRadar2'),radarCfg(b.radarScores,'#00d4ff'));
-  var insights=[];
-  var rl=['Engagement','Consistency','SEO','Thumbnails','Retention','Growth'];
-  rl.forEach(function(l,i){var diff=a.radarScores[i]-b.radarScores[i];if(diff<=-20)insights.push({icon:'⚠️',text:'<strong>'+l+':</strong> You are '+Math.abs(diff)+' points behind.'});else if(diff>=20)insights.push({icon:'✅',text:'<strong>'+l+':</strong> You lead by '+diff+' points — competitive advantage.'});});
-  if(parseFloat(a.engRate)>parseFloat(b.engRate)*1.5)insights.push({icon:'🏆',text:'Your engagement rate ('+a.engRate+'%) is far higher than theirs ('+b.engRate+'%). Your audience is more active.'});
-  if(!insights.length)insights.push({icon:'📊',text:'Both channels are closely matched. Check content pattern insights for key differentiators.'});
-  document.getElementById('cmpInsights').innerHTML=insights.map(function(i){return '<div class="cmp-insight-item"><span style="flex-shrink:0">'+i.icon+'</span><div>'+i.text+'</div></div>';}).join('');
-}
-
 </script>
 </body>
 </html>
